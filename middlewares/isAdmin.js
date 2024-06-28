@@ -1,8 +1,6 @@
 const isAdminAuth = (req, res, next) => {
     try {
-        console.log(req.session.admin+"======");
         if (req.session.admin) {
-            console.log(req.session);
             return res.redirect('/admin/home')
         } else {
             next()
@@ -14,7 +12,6 @@ const isAdminAuth = (req, res, next) => {
 
 const isAdmin = (req, res, next) => {
     try {
-        console.log(req.session.admin+"++++");
         if (req.session.admin) {
             next()
         } else {

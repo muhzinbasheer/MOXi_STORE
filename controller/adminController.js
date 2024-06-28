@@ -23,8 +23,6 @@ const adminLogin = (req, res) => {
 const loginPost = async (req, res) => {
     try {
         const { email, password } = req.body
-     
-
         const adminData = await AdminModel.findOne({ email: email })
         if (email === adminData.email && password === adminData.password) {
             req.session.admin=adminData.email

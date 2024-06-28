@@ -131,7 +131,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 
 
-<<<<<<< HEAD
     <script>
         function validateProductTitle() {
             const productTitle = document.getElementById('productTitle').value
@@ -148,23 +147,6 @@
             }
             return true;
         }
-=======
-function validatestock(){
-    const productStock = document.getElementById('productStock').value
-    const error = document.getElementById('stock-error')
-    error.innerText=''
-    if(productStock.trim()===''){
-        error.innerText="stock must be specified"
-        return false
-    }else if(parseFloat(productStock) <0){
-        error.innerText = 'stock cannot be less than 1'
-        return false;
-    }else if(isNaN(productStock)){
-        error.innerText = 'enter an integer value'
-    }
-    return true
-}
->>>>>>> today
 
         function validateProductDescription() {
             const productDescription = document.getElementById('productDescription').value

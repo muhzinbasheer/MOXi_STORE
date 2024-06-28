@@ -1,7 +1,17 @@
-const isUser =  (req,res,next) => {
+const User = require('../model/userModel')
+
+const isUser = async (req,res,next) => {
     try {
         if(req.session.User){
-            next()
+            const user = await User.findOne({
+                email: req.session.User.email
+            })
+            if(user.isBlock===false){
+                next()
+            }else{
+                res.render('user/login',{message: "you are temporarly blocked"})
+            }
+            
         }else{
             res.redirect('/login')
         }
@@ -21,6 +31,7 @@ const userAuth = (req,res,next) => {
         
     }
 }
+
 
 module.exports = {
     isUser,

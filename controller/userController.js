@@ -128,10 +128,12 @@ const login = async (req, res) => {
     try {
         const { email, password } = req.body
         const userData = await User.findOne({ email: email })
-        req.session.User = userData
+        if(userData.isBlock==false){
+            req.session.User = userData
         if (userData) {
             const isVal = await bcrypt.compare(password, userData.password);
             console.log(isVal);
+
             if (isVal) {
                 const user = req.session.User
                 const product = await Product.find({}).sort({createdAt:-1}).limit(6)
@@ -142,7 +144,10 @@ const login = async (req, res) => {
         } else {
             res.render('user/login', { message: 'this user not exist' })
         }
-
+      }else{
+        res.render('user/login',{message: "you are temporarly blocked"})
+      }
+        
     } catch (error) {
         console.log(error);
     }

@@ -34,7 +34,11 @@ function checkFileType(file, cb) {
 
 const productPage = async (req, res) => {
     try {
-        const product = await Product.find({ isBlock: false })
+        const allProduct = await Product.find({ isBlock: false }).populate('category')
+        const product =  allProduct.filter((item) =>{
+            return item.category.isBlock === false
+        })
+        console.log(product);
         const category = await Category.find({ isBlock: false })
         const user = req.session.User;
         res.render('user/product', { product, user, category })
@@ -127,7 +131,6 @@ const publish = async (req, res) => {
 const editProductPage = async (req, res) => {
     try {
         const productData = await Product.find({ _id: req.query.id }).populate('category');
-        console.lo
         const category = await Category.find()
         const categoryData = category.filter(data => data.id != productData[0].category._id)
         res.render('admin/editProduct', { product: productData, category: categoryData })
