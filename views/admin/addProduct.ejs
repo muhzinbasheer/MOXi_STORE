@@ -98,7 +98,7 @@
                                             <label class="form-label">Images</label>
                                             <input class="form-control" type="file" name="images" id="productImages" accept=".jpg,.jpeg,.png" multiple>
                                             <div id="error-message" style="color: red; display: none;">Invalid file type. Please select an image file (jpg, jpeg, png).</div>
-                                            <div id="image-preview" class="mt-3"></div> <!-- Image preview container -->
+                                            <div id="image-preview" class="mt-3"></div> 
                                         </div>
                                         
                                     </div>
@@ -234,18 +234,18 @@
     })
         
     </script>
-    <!-- //image preview -->
 
+    <!-- //image preview -->
     <script>
         document.getElementById('productImages').addEventListener('change', function(event) {
             const files = event.target.files;
             const previewContainer = document.getElementById('image-preview');
-            previewContainer.innerHTML = ''; // Clear previous previews
+            previewContainer.innerHTML = ''; 
         
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 
-                // Validate file type
+               
                 if (!file.type.match('image.*')) {
                     document.getElementById('error-message').style.display = 'block';
                     continue;
@@ -257,7 +257,7 @@
                 reader.onload = function(e) {
                     const img = document.createElement('img');
                     img.src = e.target.result;
-                    img.style.maxWidth = '100px'; // Set the desired width for the preview
+                    img.style.maxWidth = '100px'; 
                     img.style.marginRight = '10px';
                     previewContainer.appendChild(img);
                 };

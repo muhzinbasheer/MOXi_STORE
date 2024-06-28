@@ -185,7 +185,7 @@
             if (productStock.trim() === '') {
                 error.innerText = "stock must be specified"
                 return false
-            } else if (parseFloat(productStock) < 1) {
+            } else if (parseFloat(productStock) < 0) {
                 error.innerText = 'stock cannot be less than 1'
                 return false;
             } else if (isNaN(productStock)) {
