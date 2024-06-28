@@ -20,7 +20,6 @@ const addCategory = async (req, res) => {
 const submitAddCategory = async (req, res) => {
     try {
         const { category_name, description } = req.body
-        console.log(req.body);
         const isExisting = await Category.findOne({ name: category_name })
         if (isExisting) {
             return res.render('admin/addCategory', { message: 'category already exists' })

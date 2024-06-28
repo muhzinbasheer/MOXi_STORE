@@ -2,7 +2,6 @@ const Product = require('../model/productModel')
 const Category = require('../model/categoryModel')
 const multer = require('multer');
 const path = require('path');
-const mongoose = require("mongoose")
 
 const storage = multer.diskStorage({
     destination: './uploads/', 
@@ -61,7 +60,6 @@ const productPageAdmin = async (req, res) => {
 const addProduct = async (req, res) => {
     try {
         const category = await Category.find()
-        console.log(category);
         res.render('admin/addProduct', { category })
     } catch (error) {
         res.status(500).json({ message: 'internal server error' })
@@ -77,8 +75,7 @@ const submitAddProduct = async (req, res) => {
             } else {
                 try {
                     const { productTitle, description, cost, category, stock } = req.body;
-                    console.log(req.body);
-                    
+
                     const existingProduct = await Product.findOne({ title: productTitle });
                     if (existingProduct) {
                         return res.render('admin/addProduct', { message: 'Product already exists', category });
@@ -106,7 +103,6 @@ const submitAddProduct = async (req, res) => {
 
 const unPublish = async (req, res) => {
     try {
-        console.log(req.query.id)
         const id = req.query.id
         await Product.findByIdAndUpdate(id, { isBlock: true })
         return res.status(200).json({ success: true })
