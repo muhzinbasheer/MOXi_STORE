@@ -1,0 +1,137 @@
+<%- include('../layout/adminHeader') %>
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Category Management</h2>
+                    <p>Add,edit & delete on categories</p>
+                </div>
+                <div>
+                    <a href="/admin/addCategory" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Add New Category</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Edit</th>
+                                            <th>Status</th>
+                                            <th class="text-end">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% for(let i = 0; i < category.length; i++) { %>
+                                            <tr>
+                                                <td><b><%= category[i].name %></b></td>
+                                                <td><%= category[i].description %></td>
+                                                <td><a href="/admin/categoriesEdit?id=<%= category[i]._id %>">edit</a></td>
+                                                <td id="status-<%= category[i]._id %>">
+                                                    <% if (category[i].isBlock) { %>
+                                                        <p class="text-danger">Unlisted</p>
+                                                    <% } else { %>
+                                                        <p class="text-success">Listed</p>
+                                                    <% } %>
+                                                </td>
+                                                <td class="text-end d-flex justify-content-end">
+                                                    <button class="btn btn-primary" onclick="listed('<%= category[i]._id %>')">List</button>
+                                                    <button class="btn btn-secondary ms-2" onclick="unlisted('<%= category[i]._id %>')">Unlist</button>
+                                                </td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> <!-- .col -->
+                    </div> <!-- .row -->
+                </div> <!-- .card-body -->
+            </div> <!-- .card -->
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/vendors/select2.min.js"></script>
+    <script src="assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="assets/js/main.js" type="text/javascript"></script>
+</body>
+<script>
+    async function listed(categoryId) {
+        const response = await fetch('/admin/listCategory', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ categoryId })
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            Swal.fire({
+                icon: "success",
+                title: result.message,
+                showConfirmButton: false,
+                timer: 1500
+            });
+            document.getElementById(`status-${categoryId}`).innerHTML = '<p class="text-success">Listed</p>';
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: result.message,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    async function unlisted(categoryId) {
+        const response = await fetch('/admin/unlistCategory', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ categoryId })
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            Swal.fire({
+                icon: "success",
+                title: result.message,
+                showConfirmButton: false,
+                timer: 1500
+            });
+            document.getElementById(`status-${categoryId}`).innerHTML = '<p class="text-danger">Unlisted</p>';
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: result.message,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+</script>
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-brands.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:49 GMT -->
+</html>
+<%- include('../layout/adminFooter') %>

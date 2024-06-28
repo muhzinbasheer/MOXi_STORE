@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Sign-In -->
+    <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f5f6fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        .form-container {
+            text-align: center;
+        }
+
+        .form-header h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .input-group input {
+            width: calc(100% - 20px);
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .input-group input:focus {
+            border-color: #3498db;
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .google-signin {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .google-signin h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #555;
+        }
+
+        .google-signin .g-signin2 {
+            display: inline-block;
+        }
+
+        p {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Sign Up</h2>
+            </div>
+            <form id="signupForm" action="/submit-signup" method="POST" >
+                <div class="input-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="username" onkeyup="validateFullName()">
+                    <div class="error" id="nameError"></div>
+                </div>
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" onkeyup="validateEmail()">
+                    <div class="error" id="emailError"></div>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" onkeyup="validatePassword()">
+                    <div class="error" id="passwordError"></div>
+                </div>
+                <div class="input-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" onkeyup="validateConfirmPassword()">
+                    <div class="error" id="confirmPasswordError"></div>
+                </div>
+                <button type="submit" class="btn">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="scripts.js"></script>
+    <script>
+        function validateFullName() {
+            const value = document.getElementById('name').value.trim();
+            const errorMessage = document.getElementById('nameError');
+            const nameRegex = /^[A-Z][a-zA-Z\s'-]*$/;
+            errorMessage.textContent = '';
+
+            if (value === '') {
+                errorMessage.textContent = 'Full Name is required.';
+                return false;
+            } else if (value.length < 3) {
+                errorMessage.textContent = 'Full Name must be at least 3 characters long.';
+                return false;
+            } else if (!nameRegex.test(value)) {
+                errorMessage.textContent = 'Full Name must start with a capital letter and contain only letters';
+                return false;
+            }
+            return true;
+        }
+
+        async function validateEmail() {
+            const value = document.getElementById('email').value.trim();
+            const errorMessage = document.getElementById('emailError');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            errorMessage.textContent = '';
+
+            if (value === '') {
+                errorMessage.textContent = 'Email is required.';
+                return false;
+            } else if (!emailRegex.test(value)) {
+                errorMessage.textContent = 'Invalid email format.';
+                return false;
+            }
+            try {
+                const response = await fetch('/check-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: value })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    errorMessage.textContent = 'Email is already registered.';
+                    return false;
+                }
+            } catch (error) {
+                errorMessage.textContent = 'Error checking email uniqueness.';
+                return false;
+            }
+            return true;
+        }
+
+
+
+        function validatePassword() {
+            const value =document.getElementById('password').value.trim();
+            const errorMessage = document.getElementById('passwordError');
+            errorMessage.textContent = '';
+
+            if (value === '') {
+                errorMessage.textContent = 'Password is required.';
+                return false;
+            } else if (value.length < 6) {
+                errorMessage.textContent = 'Password must be at least 6 characters long.';
+                return false;
+            }
+            return true;
+        }
+
+        function validateConfirmPassword() {
+            const value = document.getElementById('confirmPassword').value.trim();
+            const passwordValue = document.getElementById('password').value.trim();
+            const errorMessage = document.getElementById('confirmPasswordError');
+            errorMessage.textContent = '';
+
+            if (value === '') {
+                errorMessage.textContent = 'Confirm Password is required.';
+                return false;
+            } else if (value !== passwordValue) {
+                errorMessage.textContent = 'Passwords do not match.';
+                return false;
+            }
+            return true;
+        }
+
+           
+            document.getElementById('signupForm').addEventListener('submit', (e)=>{
+            e.preventDefault()
+           
+           
+            const isFullNameValid = validateFullName();
+            const isEmailValid = validateEmail()
+            const isPasswordValid = validatePassword();
+            const isConfirmPasswordValid = validateConfirmPassword();
+
+            
+                if( isFullNameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid){
+                    document.getElementById('signupForm').submit()
+                }
+            }) 
+            
+    </script>
+</body>
+</html>
