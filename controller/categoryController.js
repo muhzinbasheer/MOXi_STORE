@@ -71,6 +71,7 @@ const unlistCategory = async (req,res) => {
         console.log(error);
     }
 }
+
 const editCategoryPage = async(req,res)=>{
     try {
         const categoryData=await Category.find({_id:req.query.id})
@@ -83,7 +84,6 @@ const editCategoryPage = async(req,res)=>{
 const submitEditCategory = async (req, res) => {
     try {
         const {name, description } = req.body;
-        console.log(name);
         const category_id = req.query.id
         const category = await Category.find()
         const updatedCategory = await Category.findByIdAndUpdate(
