@@ -1,10 +1,19 @@
 const AdminModel = require('../model/adminModel')
 const User=require('../model/userModel')
+const Order = require("../model/orderModel");
+const Category = require("../model/categoryModel")
+const Product = require("../model/productModel")
 
 
-const adminPage = (req, res) => {
+const adminPage = async(req, res) => {
     try {
-        res.render('admin/adminhome')
+        const order = await Order.find({totalPrice:{$gt:0}});
+        const totalSales = order.reduce((acc,curr)=>acc+=curr.totalPrice,0);
+        const orderCount = await Order.find({}).count();
+        const categoryCount = await Category.find().count();
+        const productCount = await Product.find().count();
+        const userCount = await User.find().count();
+        res.render('admin/adminhome',{totalSales,orderCount,categoryCount,productCount,userCount})
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'internal server error' })

@@ -447,7 +447,7 @@ const updateItemStatus = async (req, res) => {
 
 const  latest =  async (req, res) => {
     try {
-        const orders = await Order.find().sort({ createdAt: -1 }).populate('userId').populate('items.productId');
+        const orders = await Order.find().sort({ createdAt: -1 }).limit(10).populate('userId').populate('items.productId');
         const totalSales = orders.reduce((acc, order) => acc + order.totalPrice, 0);
         res.json({orders,totalSales});
     } catch (error) {
@@ -466,7 +466,6 @@ const report = async (req,res) => {
             }
         }).populate('userId').populate('items.productId');
 
-        // Aggregate sales data
         const totalSales = orders.reduce((acc, order) => acc + order.totalPrice, 0);
         const totalOrders = orders.length;
         const totalItems = orders.reduce((acc, order) => acc + order.items.reduce((itemAcc, item) => itemAcc + item.quantity, 0), 0);
