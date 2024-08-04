@@ -1,0 +1,143 @@
+<%- include('./partial/head') %>
+
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/admin-assets/imgs/theme/favicon.svg">
+    <link href="/admin-assets/css/main.css" rel="stylesheet" type="text/css" />
+    
+        <style>
+            body,
+            .navbar-aside {
+                background-color: #fff;
+            }
+
+            .custom-top {
+                position: absolute;
+                top: 15%;
+                left: 0;
+                width: 100%;
+            }
+
+            .text-decoration {
+                text-decoration: none;
+            }
+
+            .main-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background-color: #fff;
+            }
+
+            .profile-section {
+                width: 100%;
+                max-width: 500px;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                background-color: #fff;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .profile-section h2 {
+                margin-bottom: 20px;
+            }
+
+            .profile-detail {
+                margin-bottom: 10px;
+            }
+
+            .profile-detail span {
+                font-weight: bold;
+            }
+
+            .edit-profile {
+                margin-top: 20px;
+            }
+
+            .btn-primary {
+                display: inline-block;
+                padding: 10px 20px;
+                color: #fff;
+                background-color: #007bff;
+                border: none;
+                border-radius: 5px;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+        </style>
+
+<body>
+    <aside class="navbar-aside custom-top" id="offcanvas_aside">
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item active">
+                    <a class="menu-link" href="/userProfile ">
+                        <i class="icon material-icons md-person"></i>
+                        <span class="text">My Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/orderDetails">
+                        <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Orders</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/addressPage">
+                        <i class="icon material-icons md-home"></i>
+                        <span class="text">My Address</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/walletPage">
+                        <i class="icon material-icons md-account_balance_wallet"></i>
+                        <span class="text">Wallet</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/changePassword">
+                        <i class="icon material-icons md-settings"></i>
+                        <span class="text">Change password</span>
+                    </a>
+                </li>
+            </ul>
+            <hr>
+            <ul class="menu-aside">
+                <li class="menu-item">
+                    <a class="menu-link" href="/logout">
+                        <i class="icon material-icons md-local_offer"></i>
+                        <span class="text">Logout</span>
+                    </a>
+                </li>
+            </ul>
+            <br>
+            <br>
+        </nav>
+    </aside>
+
+    <div class="main-container">
+        <div class="profile-section">
+            <h2>User Profile</h2>
+            <div class="profile-detail">
+                <span>Username:</span>
+                <%= user.username %>
+            </div>
+            <div class="profile-detail">
+                <span>Email:</span>
+                <%= user.email %>
+            </div>
+            <div class="edit-profile">
+                <a class="btn btn-primary" href="/editProfile">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/admin-assets/js/main.js"></script>
+
+<%- include('./partial/footer') %>

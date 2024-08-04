@@ -1,0 +1,271 @@
+<%- include('../layout/adminHeader') %>
+        <section class="content-main">
+            <div class="row">
+                <div class="col-6">
+                    <div class="content-header">
+                        <h2 class="content-title">Add New Product</h2>
+                        <div>
+                            <!-- <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                            <button class="btn btn-md rounded font-sm hover-up">Publich</button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-7 offset-2">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <% if (locals.message) { %>
+                             <p class="text-danger"><%= message %></p>
+                            <% } %>
+                            <form action="/admin/submitAddProduct" method="post" id="product_form" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h6>1. General info</h6>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="mb-4">
+                                            <label class="form-label">Product title</label>
+                                            <input type="text" name="productTitle" placeholder="Type here" onkeyup="validateProductTitle()"  class="form-control" id="productTitle">
+                                            <small class="text-danger" id="title-error"></small>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Description</label>
+                                            <textarea name="description" placeholder="Type here" onkeyup="validateProductDescription()" class="form-control" rows="4" id="productDescription"></textarea>
+                                            <small class="text-danger" id="description-error"></small>
+                                        </div>
+                                        <!-- <div class="mb-4">
+                                            <label class="form-label">Brand name</label>
+                                            <select name="brandName" class="form-select" required>
+                                                <option>Adidas</option>
+                                                <option>Nike</option>
+                                                <option>Puma</option>
+                                            </select>
+                                        </div> -->
+                                    </div> <!-- col.// -->
+                                </div> <!-- row.// -->
+                                <hr class="mb-4 mt-0">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h6>2. Pricing</h6>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="mb-4">
+                                            <label class="form-label">Cost in INR</label>
+                                            <input type="text" name="cost" placeholder="00.0" onkeyup="validatecost()" class="form-control" id="productPrice">
+                                            <small class="text-danger" id="price-error"></small>
+                                        </div>
+                                    </div> <!-- col.// -->
+                                </div> <!-- row.// -->
+                                <hr class="mb-4 mt-0">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h6>3. Category</h6>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="mb-4">
+                                            
+                                            <label class="form-label">Category</label>
+                                            <select name="category" class="form-select">
+                                            <% for( let i = 0; i < category.length; i++ ) { %>
+                                                <option value="<%= category[i]._id %>" class="text-danger"><%=category[i].name %></option>
+                                            <% } %>
+                                        </select>
+
+                                        </div>
+                                    </div> <!-- col.// -->
+                                </div> <!-- row.// -->
+                                <hr class="mb-4 mt-0">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h6>4. Stock</h6>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="mb-4">
+                                            <label class="form-label">Quantities</label>
+                                            <input type="text" name="stock" placeholder="00.0" onkeyup="validatestock()" class="form-control" id="productStock">
+                                            <small class="text-danger" id="stock-error"></small>
+                                        </div>
+                                    </div> <!-- col.// -->
+                                </div> <!-- row.// -->
+                                <hr class="mb-4 mt-0">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h6>5. Media</h6>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="mb-4">
+                                            <label class="form-label">Images</label>
+                                            <input class="form-control" type="file" name="images" id="productImages" accept=".jpg,.jpeg,.png" multiple>
+                                            <div id="error-message" style="color: red; display: none;">Invalid file type. Please select an image file (jpg, jpeg, png).</div>
+                                            <div id="image-preview" class="mt-3"></div> 
+                                        </div>
+                                        
+                                    </div>
+                                    </div> <!-- col.// -->
+                                </div> <!-- .row end// -->
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            </div>
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/vendors/select2.min.js"></script>
+    <script src="assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="assets/js/main.js" type="text/javascript"></script>
+
+    <script>
+        function validateProductTitle(){
+            const productTitle = document.getElementById('productTitle').value
+            const errorMessage = document.getElementById('title-error')
+            errorMessage.innerText = ''
+            if(productTitle.trim()===''){
+                errorMessage.innerText = 'product title cannot be empty'
+                return false;
+            }else if(productTitle.length<4){
+                errorMessage.innerText = 'title atleast need 4 letters'
+                return false;
+            }
+            return true;
+        }
+
+        function validateProductDescription(){
+            const productDescription = document.getElementById('productDescription').value
+            const error = document.getElementById('description-error')
+            error.innerText=""
+            if(productDescription.trim()===''){ 
+                error.innerText="desciption required"
+                return false
+            }else if(productDescription.trim().length<15){
+                error.innerText = 'minimum 15 letters required'
+                return false;
+            }
+            return true
+        }
+
+        function validatecost(){
+            const productPrice = document.getElementById('productPrice').value
+            const error = document.getElementById('price-error')
+            error.innerText= ''
+            if(productPrice.trim()===''){
+                error.innerText="should add some price"
+                return false
+            }else if(parseFloat(productPrice) <1){
+                error.innerText = 'price cannot be less than 1'
+                return false;
+            }else if(isNaN(productPrice)){
+                error.innerText = 'price should be an integer value'
+            }
+            return true
+        }
+
+        function validatestock(){
+            const productStock = document.getElementById('productStock').value
+            const error = document.getElementById('stock-error')
+            error.innerText=''
+            if(productStock.trim()===''){
+                error.innerText="stock must be specified"
+                return false
+            }else if(parseFloat(productStock) <0){
+                error.innerText = 'stock cannot be less than 1'
+                return false;
+            }else if(isNaN(productStock)){
+                error.innerText = 'enter an integer value'
+            }
+            return true
+        }
+
+        document.getElementById('productImages').addEventListener('change', function(event) {
+        const allowedExtensions = ['jpg', 'jpeg', 'png'];
+        const files = event.target.files;
+        let valid = true;
+
+        for (let i = 0; i < files.length; i++) {
+            const fileExtension = files[i].name.split('.').pop().toLowerCase();
+            if (!allowedExtensions.includes(fileExtension)) {
+                valid = false;
+                break;
+            }
+        }
+
+        const errorMessage = document.getElementById('error-message');
+        if (!valid) {
+            errorMessage.style.display = 'block';
+            event.target.value = ''; 
+        } else {
+            errorMessage.style.display = 'none';
+           
+        }
+    });
+
+
+    const productForm = document.getElementById('product_form')
+    productForm.addEventListener('submit',(event)=>{
+        event.preventDefault()
+    if(validateProductTitle() && validateProductDescription() && validatecost() && validatestock() ){
+       productForm.submit()
+    }
+    })
+        
+    </script>
+
+    <!-- //image preview -->
+    <script>
+        document.getElementById('productImages').addEventListener('change', function(event) {
+            const files = event.target.files;
+            const previewContainer = document.getElementById('image-preview');
+            previewContainer.innerHTML = ''; 
+        
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+               
+                if (!file.type.match('image.*')) {
+                    document.getElementById('error-message').style.display = 'block';
+                    continue;
+                } else {
+                    document.getElementById('error-message').style.display = 'none';
+                }
+        
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.maxWidth = '100px'; 
+                    img.style.marginRight = '10px';
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        </script>
+        
+</body>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-form-product-2.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:32 GMT -->
+</html>

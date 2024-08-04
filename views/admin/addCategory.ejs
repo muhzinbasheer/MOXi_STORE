@@ -1,0 +1,106 @@
+<%- include('../layout/adminHeader') %>
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Add Category</h2>
+            <p>Add a  new category</p>
+        </div>
+        <div>
+            <input type="text" placeholder="Search Categories" class="form-control bg-white">
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-7 offset-2">
+                    <% if (locals.message) { %>
+                     <p class="text-danger"><%= message %></p>
+                    <% } %>
+                    <form id="form" action="/admin/submitAddCategory" method="post">
+                        <div class="mb-4">
+                            <label for="product_name" class="form-label">Name</label>
+                            <input type="text" placeholder="Type here" class="form-control" id="category_name" onkeyup="validateCategoryName()" name="category_name"/>
+                            <small class="text-danger" id="name-error"></small>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea id="ctgry-descrption" placeholder="Type here" class="form-control"  onkeyup="validateCategoryDescription()" name="description"></textarea>
+                            <small class="text-danger" id="descriptionerror"></small>
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-primary" type="submit">Create category</button>
+                        </div>
+                    </form>
+                </div>
+                </div> <!-- .col// -->
+            </div> <!-- .row // -->
+        </div> <!-- card body .// -->
+    </div> <!-- card .// -->
+</section> <!-- content-main end// -->
+<footer class="main-footer font-xs">
+    <div class="row pb-30 pt-15">
+        <div class="col-sm-6">
+            <script>
+            document.write(new Date().getFullYear())
+            </script> ©, Evara - HTML Ecommerce Template .
+        </div>
+        <div class="col-sm-6">
+            <div class="text-sm-end">
+                All rights reserved
+            </div>
+        </div>
+    </div>
+</footer>
+</main>
+<script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="assets/js/vendors/select2.min.js"></script>
+<script src="assets/js/vendors/perfect-scrollbar.js"></script>
+<script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+<!-- Main Script -->
+<script src="assets/js/main.js" type="text/javascript"></script>
+
+<script>
+    function validateCategoryName(){
+        const categoryName = document.getElementById('category_name').value
+        const errorMessage = document.getElementById('name-error')
+        errorMessage.innerText = ''
+        if(categoryName.trim()===''){
+            errorMessage.innerText = 'name cannot be empty'
+            return false;
+        }else if(categoryName.length<4){
+            errorMessage.innerText = 'category name atleast contain 4 letters'
+            return false;
+        }
+        return true
+    }
+
+    function validateCategoryDescription(){  
+       let categorydescription = document.getElementById('ctgry-descrption').value
+       let error=document.getElementById('descriptionerror')
+       error.innerText=""
+       if(categorydescription.trim()===""){
+        error.innerText="desciption required"
+        return false
+      }else if(categorydescription.length<15){
+        error.innerText = 'minimum 15 letters required'
+        return false;
+      }
+      return true
+    }
+
+    const categoryForm = document.getElementById('form')
+    categoryForm.addEventListener('submit',(event)=>{
+        event.preventDefault()
+    if(validateCategoryName() && validateCategoryDescription()){
+       categoryForm.submit()
+    }
+    })
+
+</script>
+</body>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-categories.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
+</html>

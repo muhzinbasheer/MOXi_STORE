@@ -1,0 +1,19 @@
+<%- include('./partial/head') %>
+<div style="max-width: 600px; margin: 100px auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <div style="text-align: center;">
+        <h1 style="font-size: 2.5em; color: #007bff;">Thank You!</h1>
+        <p style="font-size: 1.2em; color: #555;">Your order has been placed successfully.</p>
+    </div>
+    <div style="margin-top: 30px;">
+        <h2 style="font-size: 1.8em; color: #333;">Order Details</h2>
+        <p style="font-size: 1em; color: #666;"><strong>Order ID:</strong> <%= orderId %></p>
+        <p style="font-size: 1em; color: #666;"><strong>Order Date:</strong> <%= new Date().toLocaleDateString() %></p>
+        <p style="font-size: 1em; color: #666;"><strong>Estimated Delivery:</strong> <%= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString() %></p>
+    </div>
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="/orderDetails" style="display: inline-block; padding: 10px 20px; font-size: 1em; color: #fff; background-color: #007bff; border-radius: 5px; text-decoration: none;">View Your Orders</a>
+    </div>
+</div>
+<%- include('./partial/footer') %>
+
+

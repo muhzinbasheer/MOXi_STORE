@@ -1,0 +1,152 @@
+<%- include('./partial/head') %>
+
+    <!-- breadcrumb -->
+    <div class="container" style="margin-top: 5%;">
+        <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+            <a href="/" class="stext-109 cl8 hov-cl1 trans-04">
+                Home
+                <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+            </a>
+            <span class="stext-109 cl4">
+                Wishlist
+            </span>
+        </div>
+    </div>
+
+    <!-- Wishlist -->
+    <form class="bg0 p-t-75 p-b-85">
+        <div class="container">
+            <% if (wishlist && wishlist.length> 0) { %>
+                <div class="row">
+                    <div class="col-lg-10 col-xl-8 m-lr-auto m-b-50">
+                        <div class="m-l-20 m-r--38 m-lr-0-xl">
+                            <div class="wrap-table-shopping-cart">
+                                <table class="table-shopping-cart">
+                                    <tr class="table_head">
+                                        <th class="column-1">Product</th>
+                                        <th class="column-2">Name</th>
+                                        <th class="column-3">Price</th>
+                                        <th class="column-4">Add to Cart</th>
+                                        <th class="column-5">Remove</th>
+                                    </tr>
+                                    <% wishlist.forEach(item=> { %>
+                                        <tr class="table_row">
+                                            <td class="column-1">
+                                                <div class="how-itemcart1">
+                                                    <img src="/<%= item.productimg[0] %>" alt="<%= item.title %>">
+                                                </div>
+                                            </td>
+                                            <td class="column-2">
+                                                <%= item.title %>
+                                            </td>
+                                            <td class="column-3">
+                                                $<%= item.price.toFixed(2) %>
+                                            </td>
+                                            <td class="column-4">
+                                                <button onclick="addToCart('<%= item._id %>')" type="button"
+                                                    class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+                                                    Add to Cart
+                                                </button>
+                                            </td>
+                                            <td class="column-5">
+                                                <a onclick="removeFromWishlist('<%= item._id %>')"
+                                                    class="text-danger pointer">
+                                                    X
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% } else { %>
+                    <h1 class="text-center text-secondary">No products in Wishlist, browse something.</h1>
+                    <br><br>
+                    <a href="/products" style="color: #ffffff; text-decoration: none;">
+                        <div
+                            class="w-25 m-auto flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+                            BROWSE PRODUCTS
+                        </div>
+                    </a>
+                    <% } %>
+        </div>
+    </form>
+
+    <script>
+        async function addToCart(productId) {
+            try {
+                const response = await fetch(`/addToCart/${productId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    await removeFromWishlist(productId); 
+                    Swal.fire({
+                        title: "Added to Cart",
+                        text: "Item has been added to your cart",
+                        icon: "success"
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        text: "Failed to add item to cart.",
+                        icon: "error"
+                    });
+                }
+            } catch (error) {
+                console.error('There was an error!', error);
+                Swal.fire({
+                    text: "There was an error adding the item to the cart.",
+                    icon: "error"
+                });
+            }
+        }
+
+        async function removeFromWishlist(productId) {
+            try {
+                const response = await fetch(`/deleteWishList/${productId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire({
+                        title: "Removed from Wishlist",
+                        text: "Item has been removed from your wishlist",
+                        icon: "success"
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        text: "Failed to remove item from wishlist.",
+                        icon: "error"
+                    });
+                }
+            } catch (error) {
+                console.error('There was an error!', error);
+                Swal.fire({
+                    text: "There was an error removing the item from the wishlist.",
+                    icon: "error"
+                });
+            }
+        }
+    </script>
+
+    <%- include('./partial/footer') %>

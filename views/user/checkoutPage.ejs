@@ -1,0 +1,626 @@
+<%- include('./partial/head') %>
+
+    <!-- breadcrumb -->
+    <div class="container" style="margin-top: 5%;">
+        <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+            <a href="/" class="stext-109 cl8 hov-cl1 trans-04">
+                Home
+                <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+            </a>
+
+            <span class="stext-109 cl4">
+                Checkout
+            </span>
+        </div>
+    </div>
+
+    <!-- Checkout -->
+    <form class="bg0 p-t-75 p-b-85">
+        <div class="container">
+            <% if (cart && cart.cartItems.length> 0) { %>
+                <div class="row">
+                    <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
+                        <div class="m-l-20 m-r--38 m-lr-0-xl">
+                            <div class="wrap-table-shopping-cart">
+                                <table class="table-shopping-cart">
+                                    <tr class="table_head">
+                                        <th class="column-1">Product</th>
+                                        <th class="column-2">Name</th>
+                                        <th class="column-3">Price</th>
+                                        <th class="column-4">Quantity</th>
+                                        <th class="column-5">Total</th>
+                                    </tr>
+                                    <% cart.cartItems.forEach(item=> { %>
+                                        <tr class="table_row">
+                                            <td class="column-1">
+                                                <div class="how-itemcart1">
+                                                    <img src="/<%= item.product_id.productimg[0] %>"
+                                                        alt="<%= item.product_id.title %>">
+                                                </div>
+                                            </td>
+                                            <td class="column-2">
+                                                <%= item.product_id.title %>
+                                            </td>
+                                            <td class="column-3 price-<%= item.product_id._id %>">
+                                                <%= item.price.toFixed(2) %>
+                                            </td>
+                                            <td class="column-4">
+                                                <%= item.quantity %>
+                                            </td>
+                                            <td class="column-5 total-<%= item.product_id._id %>">$ <%= (item.price *
+                                                    item.quantity).toFixed(2) %>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </table>
+                            </div>
+                            <div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
+                                <div class="flex-w flex-m m-r-20 m-tb-5">
+                                    <input class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text"
+                                        id="couponCode" name="coupon" placeholder="Coupon Code">
+                                    <div class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5"
+                                        onclick="applyCoupon()">
+                                        Apply coupon
+                                    </div>
+                                </div>
+                                <div class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5"
+                                    onclick="removeCoupon()">
+                                    Remove coupon
+                                </div>
+                            </div>
+
+                            <!-- Available Coupons Section -->
+                            <div class="available-coupons">
+                                <h4 class="mtext-109 cl2 p-b-30 mt-4">
+                                    Available Coupons
+                                </h4>
+                                <% if (availableCoupons && availableCoupons.length> 0) { %>
+                                    <ul class="list-group">
+                                        <% availableCoupons.forEach(coupon=> { %>
+                                            <li class="list-group-item">
+                                                <strong>
+                                                    <%= coupon.code %>
+                                                </strong> - <%= coupon.discount %>% off
+                                            </li>
+                                            <% }) %>
+                                    </ul>
+                                    <% } else { %>
+                                        <p>No available coupons.</p>
+                                        <% } %>
+                            </div>
+                            <div class="coupon-message">
+                                <% if (checkoutData && checkoutData.coupon) { %>
+                                    <p class="mt-4 alert alert-success">Coupon "<%= checkoutData.coupon %>" has been
+                                            applied to your order!</p>
+                                    <% } %>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-10 col-lg-5 col-xl-5 m-lr-auto m-b-50">
+                        <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
+                            <h4 class="mtext-109 cl2 p-b-30">
+                                Shipping Address
+                            </h4>
+
+                            <div class="addresses">
+                                <% if (addresses && addresses.length> 0) { %>
+                                    <% addresses[0].address.forEach(address=> { %>
+                                        <div class="address-card">
+                                            <input type="radio" name="address" id="address-<%= address._id %>"
+                                                value="<%= address._id %>" checked>
+                                            <label for="address-<%= address._id %>">
+                                                <p><strong>
+                                                        <%= address.houseName %>
+                                                    </strong></p>
+                                                <p>
+                                                    <%= address.street %>
+                                                </p>
+                                                <p>
+                                                    <%= address.state %> - <%= address.Pincode %>
+                                                </p>
+                                            </label>
+                                        </div>
+                                        <% }) %>
+                                            <% } else { %>
+                                                <p>No saved addresses. Please add an address in your profile.</p>
+                                                <% } %>
+                            </div>
+
+                            <!-- Add New Address Button -->
+                            <% if (addresses[0].address.length> 2) { %>
+                                <% } else { %>
+                                    <button type="button"
+                                        class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
+                                        data-toggle="modal" data-target="#addAddressModal">
+                                        Add New Address
+                                    </button>
+                                    <% } %>
+
+                                        <!-- Add Address Modal -->
+                                        <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog"
+                                            aria-labelledby="addAddressModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="addAddressModalLabel">Add New
+                                                            Address</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <label for="houseName">House Name</label>
+                                                            <input type="text" class="form-control" id="houseName"
+                                                                placeholder="Enter house name">
+                                                            <span id="house-name-error" class="text-danger"></span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="street">Street</label>
+                                                            <input type="text" class="form-control" id="street"
+                                                                placeholder="Enter street">
+                                                            <span id="street-error" class="text-danger"></span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="state">State</label>
+                                                            <input type="text" class="form-control" id="state"
+                                                                placeholder="Enter state">
+                                                            <span id="state-error" class="text-danger"></span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="pincode">Pincode</label>
+                                                            <input type="text" class="form-control" id="pincode"
+                                                                placeholder="Enter pincode">
+                                                            <span id="pincode-error" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-primary"
+                                                            onclick="saveAddress()">Save Address</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <h4 class="mtext-109 cl2 p-b-30 mt-4">
+                                            Payment Method
+                                        </h4>
+                                        <div class="payment-method">
+                                            <input type="radio" name="payment" id="cod" value="COD" checked>
+                                            <label for="cod">Cash on Delivery (COD)</label>
+                                        </div>
+                                        <div class="payment-method">
+                                            <input type="radio" name="payment" id="online" value="Online">
+                                            <label for="online">Online Payment</label>
+                                        </div>
+                                        <div class="payment-method">
+                                            <input type="radio" name="payment" id="wallet" value="Wallet">
+                                            <label for="wallet">Wallet</label>
+                                        </div>
+                                        <h4 class="mtext-109 cl2 p-b-30 mt-4">
+                                            Order Summary
+                                        </h4>
+                                        <div class="flex-w flex-t p-t-15 p-b-30">
+                                            <div class="size-208 text-center">
+                                                <span class="stext-110 cl2">
+                                                    Subtotal:
+                                                </span>
+                                            </div>
+                                            <div class="size-208 text-center">
+                                                <span class="mtext-110 cl2">
+                                                    $ <%= cart.totalPrice.toFixed(2) %>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="flex-w flex-t p-t-15 p-b-30 ">
+                                            <div class="size-208 text-center">
+                                                <span class="stext-110 cl2">
+                                                    Discount:
+                                                </span>
+                                            </div>
+                                            <div class="size-208 text-center">
+                                                <span class="mtext-110 cl2" id="discountAmount">
+                                                    $ 0.00
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="flex-w flex-t p-t-15 p-b-30">
+                                            <div class="size-208 text-center">
+                                                <span class="stext-110 cl2">
+                                                    Total:
+                                                </span>
+                                            </div>
+                                            <div class="size-208 text-center">
+                                                <span class="mtext-110 cl2" id="totalPrice">
+                                                    $ <%= cart.totalPrice.toFixed(2) %>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex-w flex-c p-b-20">
+                                            <div class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer"
+                                                onclick="placeOrder()">
+                                                Place Order
+                                            </div>
+                                        </div>
+                        </div>
+                    </div>
+                </div>
+                <% } else { %>
+                    <div class="text-center">
+                        <h3>Your cart is empty</h3>
+                    </div>
+                    <% } %>
+        </div>
+    </form>
+
+    <script src="/vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/vendor/animsition/js/animsition.min.js"></script>
+    <script src="/vendor/bootstrap/js/popper.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/vendor/select2/select2.min.js"></script>
+    <script src="/vendor/daterangepicker/moment.min.js"></script>
+    <script src="/vendor/daterangepicker/daterangepicker.js"></script>
+    <script src="/vendor/slick/slick.min.js"></script>
+    <script src="/vendor/parallax100/parallax100.js"></script>
+    <script src="/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
+    <script src="/vendor/isotope/isotope.pkgd.min.js"></script>
+    <script src="/vendor/sweetalert/sweetalert.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/checkout.js"></script>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        async function placeOrder() {
+            const selectedAddress = document.querySelector('input[name="address"]:checked').value;
+            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+
+            try {
+                const response = await fetch('/placeOrder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        addressId: selectedAddress,
+                        paymentMethod: paymentMethod
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    if (paymentMethod === 'Online') {
+                        const options = {
+                            key: "rzp_test_7zecuaaahdstB6",
+                            amount: data.totalPrice * 100,
+                            currency: 'INR',
+                            name: 'MOXi STORE',
+                            description: 'Test Transaction',
+                            order_id: data.razorpayOrderId,
+                            handler: function (response) {
+                                window.location.href = `/orderConfirmation?orderId=${data.orderId}`;
+                            },
+                            prefill: {
+                                name: 'Your Name',
+                                email: 'your.email@example.com',
+                                contact: '9999999999'
+                            },
+                            notes: {
+                                address: 'Your Address'
+                            },
+                            theme: {
+                                color: '#F37254'
+                            }
+                        };
+                        const rzp = new Razorpay(options);
+                        rzp.open();
+                    } else {
+                        window.location.href = `/orderConfirmation?orderId=${data.orderId}`;
+                    }
+                } else {
+                    console.log('Error placing order', data.message);
+                    Swal.fire({
+                        text: data.message,
+                        icon: "error"
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    text: "There was an error placing the order.",
+                    icon: "error"
+                });
+            }
+        }
+
+        document.querySelector('#placeOrderButton').addEventListener('click', placeOrder);
+
+
+
+
+        async function saveAddress() {
+            const houseName = document.getElementById('houseName').value;
+            const street = document.getElementById('street').value;
+            const state = document.getElementById('state').value;
+            const pincode = document.getElementById('pincode').value;
+
+            const isHouseNameValid = validateHouseName();
+            const isStreetValid = validateStreet();
+            const isStateValid = validateState();
+            const isPincodeValid = validatePincode();
+
+            if (!isHouseNameValid || !isStreetValid || !isStateValid || !isPincodeValid) return;
+
+            try {
+                const response = await fetch('/addAddress', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        houseName,
+                        street,
+                        state,
+                        pincode
+                    })
+                });
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    console.log('Error saving address');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function validateHouseName() {
+            const houseName = document.getElementById('houseName').value;
+            const errorMessage = document.getElementById('house-name-error');
+            errorMessage.innerText = '';
+
+            if (houseName.trim() === '') {
+                errorMessage.innerText = 'Field cannot be empty';
+                return false;
+            } else if (houseName.length < 3) {
+                errorMessage.innerText = 'Please enter a valid house name';
+                return false;
+            } else if (houseName.includes('_')) {
+                errorMessage.innerText = 'House name should not contain underscores';
+                return false;
+            } else if (/^\d+$/.test(houseName)) {
+                errorMessage.innerText = 'House name should not be entirely numeric';
+                return false;
+            }
+            return true;
+        }
+
+        function validateStreet() {
+            const streetName = document.getElementById('street').value;
+            const errorMessage = document.getElementById('street-error');
+            errorMessage.innerText = '';
+
+            if (streetName.trim() === '') {
+                errorMessage.innerText = 'Street name cannot be empty';
+                return false;
+            } else if (streetName.length < 4) {
+                errorMessage.innerText = 'Street name must contain at least 4 letters';
+                return false;
+            } else if (streetName.includes('_')) {
+                errorMessage.innerText = 'Street name should not contain underscores';
+                return false;
+            } else if (/^\d+$/.test(streetName)) {
+                errorMessage.innerText = 'Street name should not be entirely numeric';
+                return false;
+            }
+            return true;
+        }
+
+        function validateState() {
+            const stateName = document.getElementById('state').value;
+            const errorMessage = document.getElementById('state-error');
+            errorMessage.innerText = '';
+
+            if (stateName.trim() === '') {
+                errorMessage.innerText = 'State name cannot be empty';
+                return false;
+            } else if (stateName.length < 3) {
+                errorMessage.innerText = 'Please enter a valid state name';
+                return false;
+            } else if (stateName.includes('_')) {
+                errorMessage.innerText = 'State name should not contain underscores';
+                return false;
+            } else if (/^\d+$/.test(stateName)) {
+                errorMessage.innerText = 'State name should not be entirely numeric';
+                return false;
+            }
+            return true;
+        }
+
+        function validatePincode() {
+            const pincodeName = document.getElementById('pincode').value;
+            const errorMessage = document.getElementById('pincode-error');
+            errorMessage.innerText = '';
+
+            if (pincodeName.trim() === '') {
+                errorMessage.innerText = 'Pincode cannot be empty';
+                return false;
+            } else if (pincodeName.length !== 6) {
+                errorMessage.innerText = 'Pincode must be exactly 6 digits';
+                return false;
+            } else if (pincodeName.includes('_')) {
+                errorMessage.innerText = 'Pincode should not contain underscores';
+                return false;
+            } else if (!/^\d+$/.test(pincodeName)) {
+                errorMessage.innerText = 'Pincode should be entirely numeric';
+                return false;
+            }
+            return true;
+        }
+
+        async function applyCoupon(couponCode) {
+            const coupon = couponCode || document.querySelector('input[name="coupon"]').value;
+
+            if (!coupon) {
+                Swal.fire({
+                    text: "Please enter or select a coupon code.",
+                    icon: "warning"
+                });
+                return;
+            }
+
+            try {
+                const response = await fetch('/applyCoupon', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ coupon })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire({
+                        title: "Coupon Applied",
+                        text: "Coupon has been applied to your cart",
+                        icon: "success"
+                    }).then(() => {
+                        updatePrices(result.checkoutData.totalPrice, result.checkoutData.originalTotalPrice);
+                    });
+                } else {
+                    Swal.fire({
+                        text: result.message,
+                        icon: "error"
+                    });
+                }
+            } catch (error) {
+                console.error('Error applying coupon:', error);
+                Swal.fire({
+                    text: "There was an error applying the coupon.",
+                    icon: "error"
+                });
+            }
+        }
+
+        async function removeCoupon() {
+            try {
+                const response = await fetch('/removeCoupon', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire({
+                        title: "Coupon Removed",
+                        text: "Coupon has been removed from your cart",
+                        icon: "success"
+                    }).then(() => {
+                        updatePrices(result.checkoutData.totalPrice, result.checkoutData.originalTotalPrice);
+                    });
+                } else {
+                    Swal.fire({
+                        text: result.message,
+                        icon: "error"
+                    });
+                }
+            } catch (error) {
+                console.error('Error removing coupon:', error);
+                Swal.fire({
+                    text: "There was an error removing the coupon.",
+                    icon: "error"
+                });
+            }
+        }
+
+        function updatePrices(totalPrice, originalTotalPrice) {
+            const discountAmount = originalTotalPrice - totalPrice;
+            document.getElementById('totalPrice').innerText = `$ ${totalPrice.toFixed(0)}`;
+            document.getElementById('discountAmount').innerText = `$ ${discountAmount.toFixed(0)}`;
+        }
+
+    </script>
+
+    <%- include('./partial/footer') %>
+
+        <style>
+            .address-card {
+                border: 1px solid #ddd;
+                padding: 10px;
+                border-radius: 5px;
+                margin-bottom: 15px;
+                background-color: #f8f9fa;
+                position: relative;
+            }
+
+            .address-card input[type="radio"] {
+                display: none;
+            }
+
+            .address-card label {
+                display: block;
+                cursor: pointer;
+                padding-left: 30px;
+                position: relative;
+            }
+
+            .address-card label:before {
+                content: '';
+                width: 20px;
+                height: 20px;
+                border: 2px solid #007bff;
+                border-radius: 50%;
+                position: absolute;
+                left: 5px;
+                top: 50%;
+                transform: translateY(-50%);
+                background-color: #fff;
+            }
+
+            .address-card input[type="radio"]:checked+label:before {
+                background-color: #007bff;
+                border: 2px solid #007bff;
+            }
+
+            .payment-method {
+                margin-bottom: 15px;
+            }
+
+            .payment-method input[type="radio"] {
+                display: none;
+            }
+
+            .payment-method label {
+                display: inline-block;
+                cursor: pointer;
+                padding-left: 30px;
+                position: relative;
+            }
+
+            .payment-method label:before {
+                content: '';
+                width: 20px;
+                height: 20px;
+                border: 2px solid #007bff;
+                border-radius: 50%;
+                position: absolute;
+                left: 5px;
+                top: 50%;
+                transform: translateY(-50%);
+                background-color: #fff;
+            }
+
+            .payment-method input[type="radio"]:checked+label:before {
+                background-color: #007bff;
+                border: 2px solid #007bff;
+            }
+        </style>

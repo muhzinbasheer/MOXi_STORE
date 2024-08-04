@@ -1,0 +1,192 @@
+<%- include('../layout/adminHeader') %>
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">User Management </h2>
+                <p>list of users</p>
+            </div>
+            <div>
+                <input type="text" placeholder="Search User" class="form-control bg-white">
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>email</th>
+                                        <th>status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for( let i=0; i < user.length; i++ ) { %>
+                                        <tr>
+                                            <td>
+                                                <%=i + 1 %>
+                                            </td>
+                                            <td><b>
+                                                    <%= user[i].username %>
+                                                </b></td>
+                                            <td>
+                                                <%= user[i].email %>
+                                            </td>
+                                            <td>
+                                                <% if (user[i].isBlock==false) { %>
+                                                    <span id="blockStatus<%= i %>" class="badge badge-pill badge-soft-success">Unblocked</span>
+                                                <% } else { %>
+                                                    <span id="blockStatus<%= i %>" class="badge badge-pill badge-soft-danger">Blocked</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (user[i].isBlock===true) { %>
+                                                    <button type="button" id="blockButton<%= i %>" class="btn btn-sm font-sm btn-success rounded"
+                                                            onclick="confirmUnblock('<%= user[i]._id %>', '<%= i %>')">Unblock</button>
+                                                <% } else { %>
+                                                    <button type="button" id="blockButton<%= i %>" class="btn btn-sm font-sm btn-danger rounded"
+                                                            onclick="confirmBlock('<%= user[i]._id %>', '<%= i %>')">Block</button>
+                                                <% } %>
+                                            </td>
+                                            </tr>
+                                            <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> <!-- .col// -->
+                </div> <!-- .row // -->
+            </div> <!-- card body .// -->
+        </div> <!-- card .// -->
+    </section> <!-- content-main end// -->
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear())
+                </script> ©, Evara - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">
+                    All rights reserved
+                </div>
+            </div>
+        </div>
+    </footer>
+    </main>
+    <script src="/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/admin-assets/js/vendors/select2.min.js"></script>
+    <script src="/admin-assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/admin-assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/admin-assets/js/main.js" type="text/javascript"></script>
+    <!--user block&unblock-->
+
+    <script>
+        async function confirmBlock(userId, index) {
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "You are about to block this user.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, block them!'
+            });
+    
+            if (result.isConfirmed) {
+                block(userId, index);
+            }
+        }
+    
+        async function confirmUnblock(userId, index) {
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "You are about to unblock this user.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, unblock them!'
+            });
+    
+            if (result.isConfirmed) {
+                unblocked(userId, index);
+            }
+        }
+    
+        async function block(userId, index) {
+            const response = await fetch('/admin/blockUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId })
+            });
+            const result = await response.json();
+    
+            if (result.success) {
+                document.getElementById('blockStatus' + index).classList.replace('badge-soft-success', 'badge-soft-danger');
+                document.getElementById('blockStatus' + index).innerText = 'Blocked';
+                document.getElementById('blockButton' + index).classList.replace('btn-danger', 'btn-success');
+                document.getElementById('blockButton' + index).innerText = 'Unblock';
+                document.getElementById('blockButton' + index).setAttribute('onclick', `confirmUnblock('${userId}', ${index})`);
+                Swal.fire({
+                    icon: "success",
+                    title: result.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: result.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        }
+    
+        async function unblocked(userId, index) {
+            const response = await fetch('/admin/unblockUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId })
+            });
+            const result = await response.json();
+    
+            if (result.success) {
+                document.getElementById('blockStatus' + index).classList.replace('badge-soft-danger', 'badge-soft-success');
+                document.getElementById('blockStatus' + index).innerText = 'Unblocked';
+                document.getElementById('blockButton' + index).classList.replace('btn-success', 'btn-danger');
+                document.getElementById('blockButton' + index).innerText = 'Block';
+                document.getElementById('blockButton' + index).setAttribute('onclick', `confirmBlock('${userId}', ${index})`);
+                Swal.fire({
+                    icon: "success",
+                    title: result.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: result.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        }
+    </script>
+    </body>
+
+
+    <!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-categories.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
+
+    </html>
+    <%- include('../layout/adminFooter') %>

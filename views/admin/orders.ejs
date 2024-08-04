@@ -1,0 +1,145 @@
+<%- include('../layout/adminHeader') %>
+
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Order List</h2>
+                <p>View & edit Orders.</p>
+            </div>
+            <div>
+                <input type="text" placeholder="Search order ID" class="form-control bg-white">
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <% if (orders && orders.length> 0) { %>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>SL.NO</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Address</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col" class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% orders.map((order, index)=> { %>
+                                    <tr>
+                                        <td>
+                                            <%= (currentPage - 1) * 10 + index + 1 %>
+                                        </td>
+                                        <td><b>
+                                                <%= order.userId.username %>
+                                            </b></td>
+                                        <td>
+                                            <%= order.userId.email %>
+                                        </td>
+                                        <td>
+                                            <%= order.address.houseName %>
+                                        </td>
+                                        <td>
+                                            <%= new Date(order.updatedAt).toLocaleDateString() %>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="/admin/orders/<%= order._id %>"
+                                                class="btn btn-sm btn-success rounded font-sm">View Order</a>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive //end -->
+                    <% } else { %>
+                        <p class="text-secondary">No orders</p>
+                        <% } %>
+            </div> <!-- card-body end// -->
+        </div> <!-- card end// -->
+
+        <div class="pagination-area mt-30 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-start">
+                    <% if (pagination.prev) { %>
+                        <li class="page-item"><a class="page-link"
+                                href="?page=<%= pagination.prev.page %>&limit=<%= pagination.prev.limit %>"><i
+                                    class="material-icons md-chevron_left"></i></a></li>
+                        <% } else { %>
+                            <li class="page-item disabled"><a class="page-link" href="#"><i
+                                        class="material-icons md-chevron_left"></i></a></li>
+                            <% } %>
+
+                                <% if (pagination.next) { %>
+                                    <li class="page-item"><a class="page-link"
+                                            href="?page=<%= pagination.next.page %>&limit=<%= pagination.next.limit %>"><i
+                                                class="material-icons md-chevron_right"></i></a></li>
+                                    <% } else { %>
+                                        <li class="page-item disabled"><a class="page-link" href="#"><i
+                                                    class="material-icons md-chevron_right"></i></a></li>
+                                        <% } %>
+                </ul>
+            </nav>
+        </div>
+    </section> <!-- content-main end// -->
+
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear())
+                </script> ©, Evara - HTML Ecommerce Template.
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">
+                    All rights reserved
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="admin-assets/js/vendors/select2.min.js"></script>
+    <script src="admin-assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="admin-assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="admin-assets/js/main.js" type="text/javascript"></script>
+
+    <style>
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .form-control {
+            width: 250px;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .text-center button {
+            margin-right: 10px;
+        }
+
+        .main-footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-top: 1px solid #dee2e6;
+            font-size: 0.875rem;
+        }
+    </style>
+    </body>
+
+    </html>
+
+    <%- include('../layout/adminFooter') %>

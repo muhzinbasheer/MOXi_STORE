@@ -1,0 +1,314 @@
+<%- include('./partial/head') %>
+	<div class="bg0 m-t-23 p-5">
+		<div class="container">
+			<div class="flex-w flex-sb-m p-b-52">
+				<div class="flex-w flex-l-m filter-tope-group m-tb-10">
+					<a href="/products" class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter="*">
+						All Products
+					</a>
+					<% if (category) { %>
+						<% category.forEach(item=> { %>
+							<a onclick="productByCategory('<%= item._id %>')"
+								class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter="*">
+								<%= item.name %>
+							</a>
+							<% }) %>
+								<% } %>
+				</div>
+				<div class="flex-w flex-c-m m-tb-10">
+					<div
+						class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
+						<i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
+						<i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
+						Filter
+					</div>
+					<div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search">
+						<i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
+						<i class="icon-close-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
+						Search
+					</div>
+				</div>
+
+				<!-- Search product -->
+				<div class="dis-none panel-search w-full p-t-10 p-b-15">
+					<div class="bor8 dis-flex p-l-15">
+						<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product"
+							id="search-product" placeholder="Search">
+						<button class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04" onclick="searchProducts()">
+							<i class="zmdi zmdi-search"></i>
+						</button>
+					</div>
+				</div>
+
+				<!-- Filter -->
+				<div class="dis-none panel-filter w-full p-t-10">
+					<div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
+						<div class="filter-col1 p-r-15 p-b-27">
+							<div class="mtext-102 cl2 p-b-15">
+								Sort By
+							</div>
+							<ul>
+								<li class="p-b-6">
+									<a href="#" class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
+										onclick="filterProducts('featured')" data-filter="featured">
+										Featured
+									</a>
+								</li>
+								<li class="p-b-6">
+									<a href="#" class="filter-link stext-106 trans-04"
+										onclick="sortProducts('popularity')" data-sort="popularity">
+										Popularity
+									</a>
+								</li>
+								<li class="p-b-6">
+									<a href="#" class="filter-link stext-106 trans-04"
+										onclick="sortProducts('averageRating')" data-sort="averageRating">
+										Average rating
+									</a>
+								</li>
+								<li class="p-b-6">
+									<a href="#" class="filter-link stext-106 trans-04" onclick="sortProducts('newness')"
+										data-sort="newness">
+										Newness
+									</a>
+								</li>
+								<li class="p-b-6">
+									<a href="#" class="filter-link stext-106 trans-04"
+										onclick="sortProducts('priceAsc')" data-sort="priceAsc">
+										Price: Low to High
+									</a>
+								</li>
+								<li class="p-b-6">
+									<a href="#" class="filter-link stext-106 trans-04"
+										onclick="sortProducts('priceDesc')" data-sort="priceDesc">
+										Price: High to Low
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<button class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-clear"
+					onclick="clearFilters()">Clear 
+				</button>
+			</div>
+
+			<div class="row isotope-grid">
+				<% product.forEach(product=> { %>
+					<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item <%= product.category %>">
+						<!-- Block2 -->
+						<div class="block2">
+							<div class="block2-pic hov-img0">
+								<img src="<%= product.productimg[0] %>" height="270px" alt="IMG-PRODUCT">
+								<a href="/productDetails?id=<%=product._id%>"
+									class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04">
+									Quick View
+								</a>
+							</div>
+							<div class="block2-txt flex-w flex-t p-t-14">
+								<div class="block2-txt-child1 flex-col-l">
+									<a href="/productDetails?id=<%=product._id%>"
+										class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+										<%= product.title %>
+									</a>
+									<span class="stext-105 cl3">
+										$<%= product.price %>
+									</span>
+								</div>
+								<div class="block2-txt-child2 flex-r p-t-3">
+									<a href="javascript:void(0)"
+										class="btn-addwish-b2 dis-block pos-relative js-addwish-b2"
+										onclick="addToWishlist('<%= product._id %>')">
+										<img class="icon-heart1 dis-block trans-04"
+											src="/assets/images/icons/icon-heart-01.png" alt="ICON">
+										<img class="icon-heart2 dis-block trans-04 ab-t-l"
+											src="/assets/images/icons/icon-heart-02.png" alt="ICON">
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<% }); %>
+			</div>
+		</div>
+	</div>
+
+	<!-- SweetAlert2 -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+	<script>
+		async function productByCategory(id) {
+			try {
+				const response = await fetch(`/productByCategory?id=${id}`, {
+					method: 'GET',
+					headers: { 'Content-Type': 'application/json' }
+				});
+
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				const data = await response.json();
+				if (data.products) {
+					updateProductGrid(data.products);
+				}
+			} catch (error) {
+				console.error('There was a problem with the fetch operation:', error);
+			}
+		}
+
+		function updateProductGrid(products) {
+			const grid = document.querySelector('.isotope-grid');
+			grid.innerHTML = '';
+
+			products.forEach(product => {
+				const productHTML = `
+				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${product.category}">
+					<div class="block2">
+						<div class="block2-pic hov-img0">
+							<img src="${product.productimg[0]}" height="270px" alt="IMG-PRODUCT">
+							<a href="/productDetails?id=${product._id}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04">
+								Quick View
+							</a>
+						</div>
+						<div class="block2-txt flex-w flex-t p-t-14">
+							<div class="block2-txt-child1 flex-col-l">
+								<a href="/productDetails?id=${product._id}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+									${product.title}
+								</a>
+								<span class="stext-105 cl3">
+									$${product.price}
+								</span>
+							</div>
+							<div class="block2-txt-child2 flex-r p-t-3">
+								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+									<img class="icon-heart1 dis-block trans-04" src="/assets/images/icons/icon-heart-01.png" alt="ICON">
+									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="/assets/images/icons/icon-heart-02.png" alt="ICON">
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			`;
+				grid.insertAdjacentHTML('beforeend', productHTML);
+			});
+		}
+
+		async function searchProducts() {
+			const searchTerm = document.getElementById('search-product').value.trim();
+			if (!searchTerm) {
+				return;
+			}
+			try {
+				const response = await fetch(`/searchProducts?search=${searchTerm}`, {
+					method: 'GET',
+					headers: { 'Content-Type': 'application/json' }
+				});
+
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				const data = await response.json();
+				if (data.products) {
+					updateProductGrid(data.products);
+				}
+			} catch (error) {
+				console.error('There was a problem with the fetch operation:', error);
+			}
+		}
+
+		async function sortProducts(sortBy) {
+			try {
+				const response = await fetch(`/sortProducts?sort=${sortBy}`, {
+					method: 'GET',
+					headers: { 'Content-Type': 'application/json' }
+				});
+
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				const data = await response.json();
+				if (data.products) {
+					updateProductGrid(data.products);
+				}
+			} catch (error) {
+				console.error('There was a problem with the fetch operation:', error);
+			}
+		}
+
+		async function filterProducts(filterBy) {
+			try {
+				const response = await fetch(`/filterProducts?filter=${filterBy}`, {
+					method: 'GET',
+					headers: { 'Content-Type': 'application/json' }
+				});
+
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				const data = await response.json();
+				if (data.products) {
+					updateProductGrid(data.products);
+				}
+			} catch (error) {
+				console.error('There was a problem with the fetch operation:', error);
+			}
+		}
+
+		async function clearFilters() {
+			try {
+				location.reload()
+				const response = await fetch('/products', {
+					method: 'GET',
+					headers: { 'Content-Type': 'application/json' }
+				});
+
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				const data = await response.json();
+				if (data.products) {
+					updateProductGrid(data.products);
+					document.getElementById('search-product').value = ''; 
+
+				}
+			} catch (error) {
+				console.error('There was a problem with the fetch operation:', error);
+			}
+		}
+
+		async function addToWishlist(productId) {
+			try {
+				const userId = '<%= user ? user._id : null %>';
+				if (!userId) {
+					throw new Error('User not logged in');
+				}
+
+				const response = await fetch('/wishlist/add', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ userId, productId })
+				});
+
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+
+				const data = await response.json();
+				Swal.fire({
+					icon: 'success',
+					title: 'Success',
+					text: data.message
+				});
+			} catch (error) {
+				console.error('There was a problem with the fetch operation:', error);
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: error.message
+				});
+			}
+		}
+
+	</script>
+	<%- include('./partial/footer') %>
