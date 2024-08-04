@@ -189,7 +189,6 @@
                             <tr>
                                 <th>Order ID</th>
                                 <th>Order Date</th>
-                                <th>Total</th>
                                 <th>Payment Method</th>
                                 <th>Actions</th>
                             </tr>
@@ -202,9 +201,6 @@
                                     </td>
                                     <td>
                                         <%= new Date(order.createdAt).toLocaleDateString() %>
-                                    </td>
-                                    <td>
-                                        <%= order.totalPrice %>
                                     </td>
                                     <td>
                                         <%= order.paymentMethod %>
