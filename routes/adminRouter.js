@@ -45,6 +45,8 @@ admin_Router.post('/submitEditCategory',categoryController.submitEditCategory)
 admin_Router.get('/orders',isAdmin,orderController.orders)
 admin_Router.get('/orders/:orderId',isAdmin,orderController.adminViewOrder)
 admin_Router.post('/orders/:orderId/items/:itemId/status',isAdmin,orderController.updateItemStatus)
+admin_Router.post('/latest-orders',isAdmin,orderController.latest)
+admin_Router.post('/report',isAdmin,orderController.report)
 
 //couponController
 admin_Router.get('/couponMgt',isAdmin,couponController.coupons)

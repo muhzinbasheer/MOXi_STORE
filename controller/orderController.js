@@ -445,6 +445,50 @@ const updateItemStatus = async (req, res) => {
 
 
 
+const  latest =  async (req, res) => {
+    try {
+        const orders = await Order.find().sort({ createdAt: -1 }).populate('userId').populate('items.productId');
+        const totalSales = orders.reduce((acc, order) => acc + order.totalPrice, 0);
+        res.json({orders,totalSales});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'An error occurred while fetching the latest orders.' });
+    }
+} 
+
+const report = async (req,res) => {
+    try {
+        const { startDate, endDate } = req.body;
+        const orders = await Order.find({
+            createdAt: {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            }
+        }).populate('userId').populate('items.productId');
+
+        // Aggregate sales data
+        const totalSales = orders.reduce((acc, order) => acc + order.totalPrice, 0);
+        const totalOrders = orders.length;
+        const totalItems = orders.reduce((acc, order) => acc + order.items.reduce((itemAcc, item) => itemAcc + item.quantity, 0), 0);
+        const totalDiscount = orders.reduce((acc, order) => acc + (order.discount || 0), 0);
+        const totalCoupons = orders.reduce((acc, order) => acc + (order.coupons || 0), 0);
+
+        res.json({
+            totalSales,
+            totalOrders,
+            totalItems,
+            totalDiscount,
+            totalCoupons,
+            orders
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'An error occurred while generating the sales report.' });
+    }
+}
+
+
+
 module.exports = {
     checkout,
     placeOrder,
@@ -455,5 +499,7 @@ module.exports = {
     returnProduct,
     orders,
     adminViewOrder,
-    updateItemStatus
+    updateItemStatus,
+    report,
+    latest
 }
