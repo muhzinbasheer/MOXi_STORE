@@ -10,6 +10,7 @@ const productController = require('../controller/productController')
 const categoryController = require('../controller/categoryController')
 const orderController = require('../controller/orderController')
 const couponController = require('../controller/couponController')
+const offerController = require('../controller/offerController')
 const { isAdmin, isAdminAuth } = require('../middlewares/isAdmin')
 
 //adminController
@@ -52,5 +53,11 @@ admin_Router.post('/report',isAdmin,orderController.report)
 admin_Router.get('/couponMgt',isAdmin,couponController.coupons)
 admin_Router.post('/createCoupon',isAdmin,couponController.createCoupon)
 admin_Router.post('/deleteCoupon',isAdmin,couponController.deleteCoupon)
+
+//offerController
+admin_Router.get('/offerMgt',isAdmin,offerController.offerPage)
+admin_Router.post('/createProductOffer',isAdmin,offerController.createProductOffer)
+admin_Router.post('/createCategoryOffer',isAdmin,offerController.createCategoryOffer)
+admin_Router.delete('/deleteOffer/:id/:type',isAdmin,offerController.deleteOffer)
 
 module.exports = admin_Router
