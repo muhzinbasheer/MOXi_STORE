@@ -130,6 +130,18 @@
 					</div>
 					<% }); %>
 			</div>
+			 <!-- Pagination -->
+			 <div class="pagination flex-m flex-w p-t-26">
+				<% if (currentPage > 1) { %>
+					<a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="item-pagination flex-c-m trans-04 m-all-7">Previous</a>
+				<% } %>
+				<% for (let i = 1; i <= totalPages; i++) { %>
+					<a href="?page=<%= i %>&limit=<%= limit %>" class="item-pagination flex-c-m trans-04 m-all-7 <%= i === currentPage ? 'active-pagination' : '' %>"><%= i %></a>
+				<% } %>
+				<% if (currentPage < totalPages) { %>
+					<a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="item-pagination flex-c-m trans-04 m-all-7">Next</a>
+				<% } %>
+			</div>
 		</div>
 	</div>
 

@@ -3,12 +3,27 @@ const Order = require('../model/orderModel');
 
 const coupons = async (req, res) => { 
     try {
-        const coupons = await Coupon.find();
-        res.render('admin/couponMgt', { coupons });
+        const limit = 5; 
+        const page = req.query.page ? parseInt(req.query.page) : 1;
+        const skip = (page - 1) * limit;
+        
+        const totalCoupons = await Coupon.countDocuments();
+        const totalPages = Math.ceil(totalCoupons / limit);
+        
+        const coupons = await Coupon.find().skip(skip).limit(limit);
+        
+        res.render('admin/couponMgt', { 
+            coupons, 
+            currentPage: page,
+            totalPages,
+            totalCoupons,
+            limit 
+        });
     } catch (error) {
         res.status(500).send('Server Error');
     }
-}
+};
+
 
 
 const createCoupon = async (req, res) => {

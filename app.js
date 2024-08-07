@@ -1,7 +1,7 @@
 const express = require('express')
 require('dotenv').config()
 const app = express()
-const port = 4000
+const port = process.env.PORT
 const user_router = require('./routes/userRouter')
 const session = require('express-session')
 const mongoDb=require('./confiq/mongodb')

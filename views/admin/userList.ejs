@@ -19,8 +19,8 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Name</th>
-                                        <th>email</th>
-                                        <th>status</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -28,7 +28,7 @@
                                     <% for( let i=0; i < user.length; i++ ) { %>
                                         <tr>
                                             <td>
-                                                <%=i + 1 %>
+                                                <%= (currentPage - 1) * limit + i + 1 %>
                                             </td>
                                             <td><b>
                                                     <%= user[i].username %>
@@ -38,27 +38,62 @@
                                             </td>
                                             <td>
                                                 <% if (user[i].isBlock==false) { %>
-                                                    <span id="blockStatus<%= i %>" class="badge badge-pill badge-soft-success">Unblocked</span>
-                                                <% } else { %>
-                                                    <span id="blockStatus<%= i %>" class="badge badge-pill badge-soft-danger">Blocked</span>
-                                                <% } %>
+                                                    <span id="blockStatus<%= i %>"
+                                                        class="badge badge-pill badge-soft-success">Unblocked</span>
+                                                    <% } else { %>
+                                                        <span id="blockStatus<%= i %>"
+                                                            class="badge badge-pill badge-soft-danger">Blocked</span>
+                                                        <% } %>
                                             </td>
                                             <td>
                                                 <% if (user[i].isBlock===true) { %>
-                                                    <button type="button" id="blockButton<%= i %>" class="btn btn-sm font-sm btn-success rounded"
-                                                            onclick="confirmUnblock('<%= user[i]._id %>', '<%= i %>')">Unblock</button>
-                                                <% } else { %>
-                                                    <button type="button" id="blockButton<%= i %>" class="btn btn-sm font-sm btn-danger rounded"
+                                                    <button type="button" id="blockButton<%= i %>"
+                                                        class="btn btn-sm font-sm btn-success rounded"
+                                                        onclick="confirmUnblock('<%= user[i]._id %>', '<%= i %>')">Unblock</button>
+                                                    <% } else { %>
+                                                        <button type="button" id="blockButton<%= i %>"
+                                                            class="btn btn-sm font-sm btn-danger rounded"
                                                             onclick="confirmBlock('<%= user[i]._id %>', '<%= i %>')">Block</button>
-                                                <% } %>
+                                                        <% } %>
                                             </td>
-                                            </tr>
-                                            <% } %>
+                                        </tr>
+                                        <% } %>
                                 </tbody>
                             </table>
                         </div>
                     </div> <!-- .col// -->
                 </div> <!-- .row // -->
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        <% if (currentPage> 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>&limit=<%= limit %>"
+                                    aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <% } %>
+                                <% for (let i=1; i <=totalPages; i++) { %>
+                                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                        <a class="page-link" href="?page=<%= i %>&limit=<%= limit %>">
+                                            <%= i %>
+                                        </a>
+                                    </li>
+                                    <% } %>
+                                        <% if (currentPage < totalPages) { %>
+                                            <li class="page-item">
+                                                <a class="page-link"
+                                                    href="?page=<%= currentPage + 1 %>&limit=<%= limit %>"
+                                                    aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                            <% } %>
+                    </ul>
+                </nav>
+
             </div> <!-- card body .// -->
         </div> <!-- card .// -->
     </section> <!-- content-main end// -->
@@ -97,12 +132,12 @@
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, block them!'
             });
-    
+
             if (result.isConfirmed) {
                 block(userId, index);
             }
         }
-    
+
         async function confirmUnblock(userId, index) {
             const result = await Swal.fire({
                 title: 'Are you sure?',
@@ -113,12 +148,12 @@
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, unblock them!'
             });
-    
+
             if (result.isConfirmed) {
                 unblocked(userId, index);
             }
         }
-    
+
         async function block(userId, index) {
             const response = await fetch('/admin/blockUser', {
                 method: 'POST',
@@ -128,7 +163,7 @@
                 body: JSON.stringify({ userId })
             });
             const result = await response.json();
-    
+
             if (result.success) {
                 document.getElementById('blockStatus' + index).classList.replace('badge-soft-success', 'badge-soft-danger');
                 document.getElementById('blockStatus' + index).innerText = 'Blocked';
@@ -150,7 +185,7 @@
                 });
             }
         }
-    
+
         async function unblocked(userId, index) {
             const response = await fetch('/admin/unblockUser', {
                 method: 'POST',
@@ -160,7 +195,7 @@
                 body: JSON.stringify({ userId })
             });
             const result = await response.json();
-    
+
             if (result.success) {
                 document.getElementById('blockStatus' + index).classList.replace('badge-soft-danger', 'badge-soft-success');
                 document.getElementById('blockStatus' + index).innerText = 'Unblocked';
@@ -184,9 +219,4 @@
         }
     </script>
     </body>
-
-
-    <!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-categories.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
-
-    </html>
     <%- include('../layout/adminFooter') %>

@@ -46,14 +46,28 @@ const loginPost = async (req, res) => {
     }
 }
 
-const userPage = async(req,res)=>{
+const userPage = async (req, res) => {
     try {
-        const user=await User.find()
-        res.render('admin/userList',{user})
+        const page = parseInt(req.query.page) || 1; 
+        const limit = parseInt(req.query.limit) || 10; 
+
+        const userCount = await User.countDocuments();
+        const users = await User.find()
+            .skip((page - 1) * limit)
+            .limit(limit);
+
+        res.render('admin/userList', {
+            user: users,
+            currentPage: page,
+            totalPages: Math.ceil(userCount / limit),
+            totalUsers: userCount,
+            limit: limit
+        });
     } catch (error) {
         console.log(error.message);
     }
 }
+
 
 const blockUser = async (req,res)=>{
     try {

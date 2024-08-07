@@ -35,18 +35,35 @@ function checkFileType(file, cb) {
 
 const productPage = async (req, res) => {
     try {
-        const allProduct = await Product.find({ isBlock: false }).populate('category')
-        const product = allProduct.filter((item) => {
-            return item.category.isBlock === false
-        })
-        const category = await Category.find({ isBlock: false })
+        const { page = 1, limit = 8 } = req.query;
+        const skip = (page - 1) * limit;
+
+        const allProduct = await Product.find({ isBlock: false })
+            .populate('category')
+            .skip(skip)
+            .limit(limit);
+
+        const totalProducts = await Product.countDocuments({ isBlock: false });
+
+        const product = allProduct.filter((item) => item.category.isBlock === false);
+        const category = await Category.find({ isBlock: false });
         const user = req.session.User;
-        res.render('user/product', { product, user, category })
+
+        res.render('user/product', {
+            product,
+            user,
+            category,
+            currentPage: Number(page),
+            totalPages: Math.ceil(totalProducts / limit),
+            limit
+        });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'internal server error' })
+        res.status(500).json({ message: 'Internal server error' });
     }
 }
+
+
 
 const productPageAdmin = async (req, res) => {
     try {
