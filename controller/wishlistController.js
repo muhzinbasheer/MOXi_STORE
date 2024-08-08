@@ -24,6 +24,7 @@ const favourite = async (req, res) => {
 
 
 const addToWishList = async (req, res) => {
+    
     const { userId, productId } = req.body;
     try {
         let wishlist = await Wishlist.findOne({ userId });
