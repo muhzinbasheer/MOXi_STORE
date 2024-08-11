@@ -3,26 +3,23 @@ const Order = require('../model/orderModel');
 
 const coupons = async (req, res) => { 
     try {
-        const limit = 5; 
-        const page = req.query.page ? parseInt(req.query.page) : 1;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10; 
         const skip = (page - 1) * limit;
         
-        const totalCoupons = await Coupon.countDocuments();
-        const totalPages = Math.ceil(totalCoupons / limit);
-        
         const coupons = await Coupon.find().skip(skip).limit(limit);
-        
+        const totalCoupons = await Coupon.countDocuments(); 
+
         res.render('admin/couponMgt', { 
             coupons, 
-            currentPage: page,
-            totalPages,
-            totalCoupons,
-            limit 
+            currentPage: page, 
+            totalPages: Math.ceil(totalCoupons / limit),
+            limit
         });
     } catch (error) {
         res.status(500).send('Server Error');
     }
-};
+}
 
 
 
