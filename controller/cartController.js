@@ -23,21 +23,26 @@ const addtoCart = async (req, res) => {
             return res.status(404).json({ message: 'Product not found', success: false });
         }
 
+        const price = product.discountedPrice || product.price;
+
         let cart = await Cart.findOne({ userId });
         const itemIndex = cart.cartItems.findIndex(item => item.product_id.toString() === productId);
         if (itemIndex > -1) {
             cart.cartItems[itemIndex].quantity += quantity;
+            cart.cartItems[itemIndex].price = price; 
         } else {
-            cart.cartItems.push({ product_id: productId, quantity: quantity, price: product.price });
+            cart.cartItems.push({ product_id: productId, quantity: quantity, price: price });
         }
+
         cart.totalPrice = cart.cartItems.reduce((total, item) => total + item.quantity * item.price, 0);
         await cart.save();
         res.status(200).json({ message: 'Product added to cart successfully', success: true });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'internal server error' });
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 const itemRemove = async (req, res) => {
     try {
@@ -73,13 +78,13 @@ const updateCartQuantity = async (req, res) => {
         const newQuantity = req.body.quantity;
         let limit = 10
 
-        if(newQuantity>limit){
-            return res.json({ message: 'Your limit has exceeded for this product', success: false,stock:limit})
+        if (newQuantity > limit) {
+            return res.json({ message: 'Your limit has exceeded for this product', success: false, stock: limit })
         }
 
         const product = await Product.findOne({ _id: productId })
         if (product.stock < newQuantity) {
-            return res.json({ message: 'Item has limited stock', success: false ,stock:product.stock});
+            return res.json({ message: 'Item has limited stock', success: false, stock: product.stock });
         }
 
         let cart = await Cart.findOne({ userId });

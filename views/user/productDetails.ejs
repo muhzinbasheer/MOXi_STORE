@@ -123,31 +123,19 @@
                                 <h4 class="mtext-105 cl2 js-name-detail p-b-14">
                                     <%= selectedProduct.title %>
                                 </h4>
+                                
                 
-                                <!-- Ratings -->
-                                <div class="flex-w flex-m p-b-14">
-                                    <span class="fs-18 cl11 p-r-10">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star-half-o"></i>
+                                <% if (selectedProduct.discountedPrice && selectedProduct.discountedPrice < selectedProduct.price && off.isActive == true) { %>
+                                    <span class="mtext-106 cl2">
+                                        $<%= selectedProduct.discountedPrice.toFixed(2) %>
                                     </span>
-                                    <span class="mtext-106 cl2 p-l-10">
-                                        (45 reviews)
+                                    <p class="original-price">Original Price: <s>$<%= selectedProduct.price.toFixed(2) %></s></p>
+                                <% } else { %>
+                                    <span class="mtext-106 cl2">
+                                        $<%= selectedProduct.price.toFixed(2) %>
                                     </span>
-                                </div>
-                
-                                <span class="mtext-106 cl2">
-                                    $<%= selectedProduct.price %>
-                                </span>
-                
-                                <!-- Discount/Coupons -->
-                                <div class="p-t-10">
-                                    <span class="stext-104 cl4">
-                                        <strong>10% OFF</strong> with code <strong>SUMMER21</strong>
-                                    </span>
-                                </div>
+                                <% } %>
+                                
                 
                                 <!-- Product Description -->
                                 <p class="stext-102 cl3 p-t-23">

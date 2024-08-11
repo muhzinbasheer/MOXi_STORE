@@ -1,6 +1,7 @@
 const Product = require('../model/productModel')
 const Cart = require('../model/cartModel')
 const Category = require('../model/categoryModel')
+const Offer = require('../model/offerModel')
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -221,6 +222,8 @@ const productDetailPage = async (req, res) => {
 
         const productId = req.query.id;
         const product = await Product.findById(productId);
+        const off = await Offer.findOne({product:productId})
+        console.log('llllllllllllll',off)
         if (!product) {
             return res.status(404).send('Product not found');
         }
@@ -229,10 +232,10 @@ const productDetailPage = async (req, res) => {
             const userId = req.session.User._id
             const cart = await Cart.find({ userId });
             const productAdded = cart[0].cartItems.filter((item) => item.product_id == productId);
-            res.render('user/productDetails', { selectedProduct: product, relatedProducts: relatedProducts, user: req.session.User, productAdded: productAdded });
+            res.render('user/productDetails', { off,selectedProduct: product, relatedProducts: relatedProducts, user: req.session.User, productAdded: productAdded });
         } else {
 
-            res.render('user/productDetails', { selectedProduct: product, relatedProducts: relatedProducts, user: req.session.User, productAdded: [] });
+            res.render('user/productDetails', { off,selectedProduct: product, relatedProducts: relatedProducts, user: req.session.User, productAdded: [] });
         }
 
     } catch (error) {

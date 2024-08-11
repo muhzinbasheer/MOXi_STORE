@@ -55,9 +55,13 @@ admin_Router.post('/createCoupon',isAdmin,couponController.createCoupon)
 admin_Router.post('/deleteCoupon',isAdmin,couponController.deleteCoupon)
 
 //offerController
-admin_Router.get('/offerMgt',isAdmin,offerController.offerPage)
-admin_Router.post('/createProductOffer',isAdmin,offerController.createProductOffer)
-admin_Router.post('/createCategoryOffer',isAdmin,offerController.createCategoryOffer)
-admin_Router.delete('/deleteOffer/:id/:type',isAdmin,offerController.deleteOffer)
+admin_Router.get('/offerMgt',isAdmin,offerController.listOffers)
+admin_Router.post('/blockOffer',isAdmin,offerController.blockOffer)
+admin_Router.post('/unblockOffer',isAdmin,offerController.unblockOffer)
+admin_Router.get('/addOffer',isAdmin,offerController.addOffer)
+admin_Router.post('/submitAddOffer',isAdmin,offerController.submitAddOffer)
+admin_Router.post('/applyOfferToProduct',isAdmin,offerController.applyOfferToProduct)
+admin_Router.post('/reset-discounts',isAdmin,offerController.reset)
+
 
 module.exports = admin_Router

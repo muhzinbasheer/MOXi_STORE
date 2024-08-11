@@ -75,12 +75,12 @@ const placeOrder = async (req, res) => {
 
         const checkoutData = req.session.checkoutData || {};
         const totalPrice = checkoutData.totalPrice || cart.totalPrice;
-        const discountAmount = checkoutData.discountAmount;
+        const discountAmount = checkoutData.discountAmount || 0; 
         let razorpayOrderId = null;
 
         if (paymentMethod === 'Online') {
             const orderOptions = {
-                amount: totalPrice * 100,
+                amount: (totalPrice * 100), 
                 currency: 'INR',
                 receipt: `receipt_${new Date().getTime()}`,
                 payment_capture: 1
@@ -113,11 +113,21 @@ const placeOrder = async (req, res) => {
             userId,
             address: selectedAddress,
             paymentMethod,
-            items: cart.cartItems.map(item => ({
-                productId: item.product_id._id,
-                quantity: item.quantity,
-                price: item.product_id.price
-            })),
+            items: cart.cartItems.map(item => {
+                let price;
+                
+                if (item.product_id.discountedAmount && item.product_id.discountedAmount > 0) {
+                    price = item.product_id.discountedAmount; 
+                } else {
+                    price = item.product_id.price; 
+                }
+
+                return {
+                    productId: item.product_id._id,
+                    quantity: item.quantity,
+                    price: price
+                };
+            }),
             totalPrice: totalPrice,
             discount: discountAmount,
             razorpayOrderId: paymentMethod === 'Online' ? razorpayOrderId : null,
@@ -129,7 +139,7 @@ const placeOrder = async (req, res) => {
         for (let item of cart.cartItems) {
             let productId = item.product_id._id;
             const product = await Product.findById(productId);
-            product.stock -= item.quantity;
+            product.stock -= item.quantity; 
             await product.save();
         }
 
@@ -141,13 +151,13 @@ const placeOrder = async (req, res) => {
             const couponCode = checkoutData.coupon;
             const coupon = await Coupon.findOne({ code: couponCode });
             if (coupon) {
-                coupon.users.push(userId);
+                coupon.users.push(userId); 
                 await coupon.save();
             }
         }
 
-        req.session.checkoutData = {};
-         console.log("totalprice",totalPrice)
+        req.session.checkoutData = {}; 
+
         res.status(200).json({
             message: 'Order placed successfully',
             orderId: order._id,
@@ -159,6 +169,7 @@ const placeOrder = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
 
 
 

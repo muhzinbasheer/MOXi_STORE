@@ -42,9 +42,16 @@
                                             <td class="column-2">
                                                 <%= item.product_id.title %>
                                             </td>
-                                            <td class="column-3 price-<%= item.product_id._id %>">
-                                                <%= item.price.toFixed(2) %>
-                                            </td>
+                                            <% if (item.product_id.discountedPrice) { %>
+                                                <td class="column-3 price-<%= item.product_id._id %>">
+                                                    <%= item.product_id.discountedPrice.toFixed(2) %>
+                                                </td>
+                                                <% } else { %>
+                                                    <td class="column-3 price-<%= item.product_id._id %>">
+                                                        <%= item.product_id.price.toFixed(2) %>
+                                                    </td>
+                                            <% } %>
+                                            
                                             <td class="column-4">
                                                 <div class="wrap-num-product flex-w m-l-auto m-r-0">
                                                     <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m"
@@ -63,8 +70,7 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="column-5 total-<%= item.product_id._id %>">$ <%= (item.price *
-                                                    item.quantity).toFixed(2) %>
+                                            <td class="column-5 total-<%= item.product_id._id %>">$ <%= (item.quantity * (item.product_id.discountedPrice || item.product_id.price)).toFixed(2) %>
                                             </td>
                                             <td class="px-4"><a onclick="itemRemove('<%= item.product_id._id %>')">X</a>
                                             </td>
@@ -72,20 +78,6 @@
                                         <% }) %>
                                 </table>
                             </div>
-
-                            <!-- <div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
-                                <div class="flex-w flex-m m-r-20 m-tb-5">
-                                    <input class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text"
-                                        id="couponCode" name="coupon" placeholder="Coupon Code">
-                                    <div class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5"
-                                        onclick="applyCoupon()">
-                                        Apply coupon
-                                    </div>
-                                </div>
-                                <div class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5" onclick="removeCoupon()">
-                                    Remove coupon
-                                </div>
-                            </div> -->
                         </div>
                     </div>
 

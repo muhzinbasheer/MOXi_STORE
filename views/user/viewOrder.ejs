@@ -241,28 +241,31 @@
                 <div class="product-row product-header">
                     <div>Product</div>
                     <div>Quantity</div>
-                    <div>Price</div>
                     <% if (order.discount > 0) { %>
                      <div>Discount</div>
                     <% } %>
+                    
+                    <div>Price</div>
                     <div>Total</div>
                     <div>Status</div>
                     <div>Actions</div>
                 </div>
                 <% order.items.forEach((product) => { %>
+                    <% console.log(order);
+                     %>
                     <div class="product-row">
                         <div class="product-cell">
                             <img src="/<%= product.productId.productimg[0] %>" class="product-thumbnail" alt="Product Image">
                             <%= product.productId.title %>
                         </div>
                         <div><%= product.quantity %></div>
-                        <div>$<%= product.price.toFixed(2) %></div>
                         <% if (order.discount > 0) { %>
                             <div>$<%= (order.discount)/order.items.length+1 %></div>
                             <div>$<%= (product.price * product.quantity).toFixed(2) - (order.discount)/order.items.length+1 %></div>
                             <% } else { %>
                              <div>$<%= (product.price * product.quantity).toFixed(2) %></div>
                         <% } %>
+                        <div>$<%= order.totalPrice.toFixed(2) %></div>
                         <div id="status<%= product.productId._id  %>"><%= product.status %></div>
                         <div>
                             <% if (product.status === 'deliver') { %>

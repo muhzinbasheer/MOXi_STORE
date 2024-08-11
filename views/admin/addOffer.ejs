@@ -1,0 +1,101 @@
+<%- include('../layout/adminHeader') %>
+
+    <section class="content-main">
+        <div class="content-header">
+            <h2 class="content-title">Add New Offer</h2>
+            <p>Fill in the details to create a new offer.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form action="/admin/submitAddOffer" method="POST">
+                    <div class="mb-4">
+                        <label for="offerName" class="form-label">Offer Name</label>
+                        <input type="text" name="name" id="offerName" class="form-control"
+                            placeholder="Enter offer name" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="discountType" class="form-label">Discount Type</label>
+                        <select name="discountType" id="discountType" class="form-control">
+                            <option value="percentage">Percentage</option>
+                            <option value="flat">Flat</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="discountValue" class="form-label">Discount Value</label>
+                        <input type="number" name="discountValue" id="discountValue" class="form-control"
+                            placeholder="Enter discount value" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="discountOn" class="form-label">Discount On</label>
+                        <select name="discountOn" id="discountOn" class="form-control"
+                            onchange="toggleDiscountTarget()">
+                            <option value="product">Product</option>
+                            <option value="category">Category</option>
+                        </select>
+                    </div>
+
+                    <!-- Product Selection -->
+                    <div id="productSelect" class="mb-4">
+                        <label for="productId" class="form-label">Select Product</label>
+                        <select name="productId" id="productId" class="form-control">
+                            <% products.forEach(product=> { %>
+                                <option value="<%= product._id %>">
+                                    <%= product.title %>
+                                </option>
+                                <% }) %>
+                        </select>
+                    </div>
+
+                    <!-- Category Selection -->
+                    <div id="categorySelect" class="mb-4" style="display:none;">
+                        <label for="categoryId" class="form-label">Select Category</label>
+                        <select name="categoryId" id="categoryId" class="form-control">
+                            <% categories.forEach(category=> { %>
+                                <option value="<%= category._id %>">
+                                    <%= category.name %>
+                                </option>
+                                <% }) %>
+                        </select>
+                    </div>
+
+                    <!-- <div class="mb-4">
+                        <label for="status" class="form-label">Status</label>
+                        <select name="status" id="status" class="form-control">
+                            <option value="active">Active</option>
+                            <option value="blocked">Blocked</option>
+                        </select>
+                    </div> -->
+
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Save Offer</button>
+                        <a href="/admin/offers" class="btn btn-secondary ms-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function toggleDiscountTarget() {
+            const discountOn = document.getElementById('discountOn').value;
+            const productSelect = document.getElementById('productSelect');
+            const categorySelect = document.getElementById('categorySelect');
+
+            if (discountOn === 'product') {
+                productSelect.style.display = 'block';
+                categorySelect.style.display = 'none';
+            } else {
+                productSelect.style.display = 'none';
+                categorySelect.style.display = 'block';
+            }
+        }
+
+        // Run the toggle function once at page load to set the correct state
+        toggleDiscountTarget();
+    </script>
+
+    <%- include('../layout/adminFooter') %>

@@ -41,6 +41,15 @@ const productSchema = new mongoose.Schema({
     isFeatured: {
         type: Boolean,
         default: false
+    },
+    offerId: { 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Offer',
+        default: null 
+    },
+    discountedPrice: {
+        type: Number,
+        default: null
     }
 }, {
     timestamps: true

@@ -33,14 +33,15 @@
                 <div>Actions</div>
             </div>
             <% order.items.forEach(product => { %>
+                <% console.log(order) %>
                 <div class="product-row">
                     <div class="product-cell">
                         <img src="/<%= product.productId.productimg[0] %>" class="product-thumbnail" alt="Product Image">
                         <%= product.productId.title %>
                     </div>
                     <div><%= product.quantity %></div>
-                    <div>$<%= product.price.toFixed(2) %></div>
                     <div>$<%= (product.price * product.quantity).toFixed(2) %></div>
+                    <div>$<%= (order.totalPrice || 0).toFixed(2) %></div>
                     <div id="status<%= product.productId._id  %>"><%= product.status %></div>
                     <div>
                         <form action="/admin/orders/<%= order._id %>/items/<%= product._id %>/status" method="POST" class="status-form">
