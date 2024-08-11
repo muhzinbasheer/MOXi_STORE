@@ -31,19 +31,13 @@ const listOffers = async (req, res) => {
 const blockOffer = async (req, res) => {
     try {
         const { offerId } = req.body;
-        const offer = await Offer.findById(offerId).populate('product');
-        console.log(offer)
-        const productId = offer.product._id
-        // await Product.findByIdAndUpdate({_id:productId},{$unset:{discountedPrice: "" }})
+        const offer = await Offer.findById(offerId).populate('product').populate('category');
+        
         if (!offer) {
             return res.status(404).json({ success: false, message: "Offer not found" });
         }
 
-        const off = await Offer.findOneAndUpdate({_id:offerId},{$set:{isActive:false}},{new:true})
-
-        // offer.isActive = false;
-        // await offer.save();
-        console.log(off)
+        const off = await Offer.findByIdAndUpdate({_id:offerId},{$set:{isActive:false}},{new:true})
 
         res.status(200).json({ success: true, message: "Offer blocked successfully" });
     } catch (error) {
@@ -71,6 +65,7 @@ const unblockOffer = async (req, res) => {
     }
 };
 
+
 const addOffer = async (req, res) => {
     try {
         const products = await Product.find();
@@ -80,6 +75,7 @@ const addOffer = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
 
 const submitAddOffer = async (req, res) => {
     try {
@@ -104,15 +100,14 @@ const submitAddOffer = async (req, res) => {
                 await applyOfferToProduct(newOffer._id, product._id);
             }
         }
-        console.log(productId);
         
-
         res.redirect('/admin/offerMgt');
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
     }
 };
+
 
 const applyOfferToProduct = async (offerId, productId) => {
     const offer = await Offer.findById(offerId);
@@ -135,6 +130,7 @@ const applyOfferToProduct = async (offerId, productId) => {
         console.log(`Applied offer to product: ${product.title}, new discounted price: ${product.discountedPrice}`);
     }
 };
+
 
 const reset = async(req,res) =>{
     try {

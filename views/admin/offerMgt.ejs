@@ -186,7 +186,6 @@
                 body: JSON.stringify({ offerId })
             });
             const result = await response.json();
-
             if (result.success) {
                 document.getElementById('offerStatus' + index).classList.replace('badge-soft-success', 'badge-soft-danger');
                 document.getElementById('offerStatus' + index).innerText = 'Blocked';

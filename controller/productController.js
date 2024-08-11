@@ -5,6 +5,7 @@ const Offer = require('../model/offerModel')
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { log } = require('console');
 
 
 const storage = multer.diskStorage({
@@ -221,9 +222,15 @@ const productDetailPage = async (req, res) => {
     try {
 
         const productId = req.query.id;
-        const product = await Product.findById(productId);
-        const off = await Offer.findOne({product:productId})
-        console.log('llllllllllllll',off)
+        const product = await Product.findById(productId).populate('category');
+        const categoryId = product.category._id
+        const off = await Offer.findOne({
+            $or: [
+                { product: productId },
+                { category: categoryId }
+            ]
+        });
+        
         if (!product) {
             return res.status(404).send('Product not found');
         }

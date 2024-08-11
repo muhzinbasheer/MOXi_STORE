@@ -12,7 +12,12 @@ const categorySchema = new mongoose.Schema({
     isBlock: {
         type: Boolean,
         default: false
-    }
+    },
+    offerId: { 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Offer',
+        default: null 
+    },
 },{
     timestamps: true
 })
