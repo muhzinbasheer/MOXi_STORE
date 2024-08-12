@@ -27,6 +27,10 @@ user_Router.get('/editProfile',isUser,userController.editProfile)
 user_Router.post('/updateProfile',isUser,userController.updateProfile)
 user_Router.get('/changePassword',userController.changePassword)
 user_Router.post('/updatePassword',userController.updatePassword)
+user_Router.get('/forgot-password',userController.forgetPassword)
+user_Router.post('/forgot-password',userController.forgotPassword)
+user_Router.get('/reset-password/:token',userController.resetPassword)
+user_Router.post('/resetpassword/:token',userController.ResetPassword)
 
 //productController
 user_Router.get('/products',productController.productPage)

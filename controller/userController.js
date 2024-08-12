@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer')
 const User = require('../model/userModel')
 const bcrypt = require('bcryptjs')
+const crypto = require('crypto');
 const Product = require('../model/productModel')
 const Address = require('../model/addressModel');
 const Cart = require('../model/cartModel')
@@ -302,6 +303,87 @@ const updatePassword = async (req, res) => {
     }
 };
 
+const forgetPassword = (req,res) => {
+    try {
+        res.render('user/forgetPassword')
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            return res.status(400).render('user/forgetPassword', { message: 'No account with that email found.' });
+        }
+
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const resetTokenExpires = Date.now() + 3600000; 
+
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpires = resetTokenExpires;
+        await user.save();
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL,
+                pass: process.env.PASSWORD
+            }
+        });
+
+        const mailOptions = {
+            to: user.email,
+            from: process.env.EMAIL,
+            subject: 'Password Reset',
+            text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+            Please click on the following link, or paste this into your browser to complete the process:\n\n
+            http://${req.headers.host}/reset-password/${resetToken}\n\n
+            If you did not request this, please ignore this email and your password will remain unchanged.\n`
+        };
+
+        await transporter.sendMail(mailOptions);
+        res.render('user/messagePage', { message: 'An email has been sent to your gmail with further instructions.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+}
+
+const resetPassword = async(req,res) => {
+    try {
+        const user = await User.findOne({ 
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() } 
+        });
+
+        res.render('user/resetPassword', { token: req.params.token });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+};
+
+const ResetPassword = async (req,res) => {
+    try {       
+        const user = await User.findOne({ 
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+        user.password = req.body.confirmPassword; 
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+        res.redirect('/login');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+};
 
 
 module.exports = {
@@ -318,5 +400,9 @@ module.exports = {
     editProfile,
     updateProfile,
     changePassword,
-    updatePassword
+    updatePassword,
+    forgetPassword,
+    forgotPassword,
+    resetPassword,
+    ResetPassword
 };

@@ -93,14 +93,16 @@
                     Swal.fire({
                         title: "Added to Cart",
                         text: "Item has been added to your cart",
-                        icon: "success"
-                    }).then(() => {
-                        location.reload();
-                    });
+                        icon: "success",
+                        showConfirmButton: false,
+                         timer: 1500
+                    })
                 } else {
                     Swal.fire({
                         text: "Failed to add item to cart.",
-                        icon: "error"
+                        icon: "error",
+                        showConfirmButton: false,
+                        timer: 1500
                     });
                 }
             } catch (error) {
@@ -129,14 +131,16 @@
                     Swal.fire({
                         title: "Removed from Wishlist",
                         text: "Item has been removed from your wishlist",
-                        icon: "success"
-                    }).then(() => {
-                        location.reload();
-                    });
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
                 } else {
                     Swal.fire({
                         text: "Failed to remove item from wishlist.",
-                        icon: "error"
+                        icon: "error",
+                        showConfirmButton: false,
+                        timer: 1500
                     });
                 }
             } catch (error) {

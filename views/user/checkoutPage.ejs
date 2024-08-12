@@ -236,8 +236,9 @@
                                                 </span>
                                             </div>
                                             <div class="size-208 text-center">
+                                                $
                                                 <span class="mtext-110 cl2" id="totalPrice">
-                                                    $ <%= cart.totalPrice.toFixed(2) %>
+                                                     <%= cart.totalPrice.toFixed(2) %>
                                                 </span>
                                             </div>
                                         </div>
@@ -277,10 +278,21 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
         async function placeOrder() {
-            const selectedAddress = document.querySelector('input[name="address"]:checked').value;
-            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
 
             try {
+            const selectedAddress = document.querySelector('input[name="address"]:checked').value;
+            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+            const price =  document.getElementById('totalPrice').innerText
+            if(paymentMethod == 'COD' && price > 1000){
+                
+                Swal.fire({
+                icon: "warning",
+                text: "You cannot place COD orders for products priced above 1000.",
+                showConfirmButton: false,
+                timer: 1500
+                });
+                return
+            }
                 const response = await fetch('/placeOrder', {
                     method: 'POST',
                     headers: {
@@ -339,7 +351,7 @@
             }
         }
 
-        document.querySelector('#placeOrderButton').addEventListener('click', placeOrder);
+        document.querySelector('#placeOrderButton').addEventListener('click', placeOrder());
 
 
 

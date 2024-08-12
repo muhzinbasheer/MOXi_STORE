@@ -131,7 +131,7 @@ const placeOrder = async (req, res) => {
             totalPrice: totalPrice,
             discount: discountAmount,
             razorpayOrderId: paymentMethod === 'Online' ? razorpayOrderId : null,
-            status: paymentMethod === 'cod' ? 'Pending' : 'Paid'
+            status: paymentMethod === 'COD' ? 'Pending' : 'Paid'
         });
 
         await order.save();
@@ -460,6 +460,7 @@ const  latest =  async (req, res) => {
     try {
         const orders = await Order.find().sort({ createdAt: -1 }).limit(10).populate('userId').populate('items.productId');
         const totalSales = orders.reduce((acc, order) => acc + order.totalPrice, 0);
+        console.log('lllllllllllllllll',orders);
         res.json({orders,totalSales});
     } catch (error) {
         console.error(error);
@@ -482,7 +483,8 @@ const report = async (req,res) => {
         const totalItems = orders.reduce((acc, order) => acc + order.items.reduce((itemAcc, item) => itemAcc + item.quantity, 0), 0);
         const totalDiscount = orders.reduce((acc, order) => acc + (order.discount || 0), 0);
         const totalCoupons = orders.reduce((acc, order) => acc + (order.coupons || 0), 0);
-
+       
+        
         res.json({
             totalSales,
             totalOrders,
