@@ -1,6 +1,7 @@
 const Product = require('../model/productModel')
 const Cart = require('../model/cartModel')
 const Category = require('../model/categoryModel')
+const Order = require('../model/orderModel')
 const Offer = require('../model/offerModel')
 const multer = require('multer');
 const path = require('path');
@@ -230,7 +231,7 @@ const productDetailPage = async (req, res) => {
                 { category: categoryId }
             ]
         });
-        
+
         if (!product) {
             return res.status(404).send('Product not found');
         }
@@ -239,10 +240,10 @@ const productDetailPage = async (req, res) => {
             const userId = req.session.User._id
             const cart = await Cart.find({ userId });
             const productAdded = cart[0].cartItems.filter((item) => item.product_id == productId);
-            res.render('user/productDetails', { off,selectedProduct: product, relatedProducts: relatedProducts, user: req.session.User, productAdded: productAdded });
+            res.render('user/productDetails', { off, selectedProduct: product, relatedProducts: relatedProducts, user: req.session.User, productAdded: productAdded });
         } else {
 
-            res.render('user/productDetails', { off,selectedProduct: product, relatedProducts: relatedProducts, user: req.session.User, productAdded: [] });
+            res.render('user/productDetails', { off, selectedProduct: product, relatedProducts: relatedProducts, user: req.session.User, productAdded: [] });
         }
 
     } catch (error) {
@@ -382,6 +383,72 @@ const modifyImage = async (req, res) => {
     }
 };
 
+const bestProducts = async (req, res) => {
+    try {
+        const topSellingProducts = await Order.aggregate([
+            { $unwind: "$items" },
+            {
+                $group: {
+                    _id: "$items.productId",
+                    totalSold: { $sum: "$items.quantity" }
+                }
+            },
+            { $sort: { totalSold: -1 } },
+            { $limit: 10 }
+        ]);
+
+        const topSellingProductsDetails = await Product.find({
+            _id: { $in: topSellingProducts.map(p => p._id) }
+        }).lean();
+
+        const productsWithSoldCount = topSellingProducts.map(soldProduct => {
+            const product = topSellingProductsDetails.find(p => p._id.equals(soldProduct._id));
+            return {
+                ...product,
+                totalSold: soldProduct.totalSold
+            };
+        });
+
+        res.render('admin/bestProducts', { topSellingProducts: productsWithSoldCount });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Server Error");
+    }
+};
+
+
+const bestCategories = async (req, res) => {
+    try {
+        const topSellingCategories = await Category.aggregate([
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: '_id',
+                    foreignField: 'category',
+                    as: 'products'
+                }
+            },
+            {
+                $project: {
+                    name: 1,
+                    ordersCount: 1,
+                    isBlock: 1,
+                    productCount: { $size: "$products" },
+                    soldQuantity: { $sum: "$products.ordersCount" }
+                }
+            },
+            { $sort: { soldQuantity: -1 } },
+            { $limit: 10 }
+        ]);
+
+        res.render('admin/bestCategories', { topSellingCategories });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Server Error");
+    }
+};
+
+
 
 
 
@@ -400,5 +467,7 @@ module.exports = {
     sortProducts,
     filterProducts,
     deleteImage,
-    modifyImage
+    modifyImage,
+    bestProducts,
+    bestCategories
 }

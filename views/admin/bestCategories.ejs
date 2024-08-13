@@ -1,0 +1,45 @@
+<%- include('../layout/adminHeader') %>
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Best Categories</h2>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h4>Top Best-Selling Categories</h4>
+                <hr>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="text text-center">
+                            <tr>
+                                <th>No</th>
+                                <th>Category Name</th>
+                                <th>Number of Products</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            <% for(let i=0; i < topSellingCategories.length; i++) { %>
+                                <tr>
+                                    <td>
+                                        <%= i + 1 %>
+                                    </td>
+                                    <td><b>
+                                            <%= topSellingCategories[i].name %>
+                                        </b></td>
+                                    <td>
+                                        <%= topSellingCategories[i].productCount %>
+                                    </td>
+                                    <td>
+                                        <%= topSellingCategories[i].isBlock ? 'Inactive' : 'Active' %>
+                                    </td>
+                                </tr>
+                                <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    <%- include('../layout/adminFooter') %>

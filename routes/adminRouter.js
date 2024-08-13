@@ -29,6 +29,8 @@ admin_Router.post('/submitAddProduct',productController.submitAddProduct)
 admin_Router.get('/unPublish',isAdmin,productController.unPublish)
 admin_Router.get('/publish',isAdmin,productController.publish)
 admin_Router.get('/editProductPage',isAdmin,productController.editProductPage)
+admin_Router.get('/bestProducts',isAdmin,productController.bestProducts)
+admin_Router.get('/bestCategories',isAdmin,productController.bestCategories)
 admin_Router.post('/submitEditProduct',productController.submitEditProduct)
 admin_Router.post('/deleteImage', isAdmin, productController.deleteImage);
 admin_Router.post('/modifyImage', isAdmin, upload.single('newImage'), productController.modifyImage);
@@ -48,6 +50,8 @@ admin_Router.get('/orders/:orderId',isAdmin,orderController.adminViewOrder)
 admin_Router.post('/orders/:orderId/items/:itemId/status',isAdmin,orderController.updateItemStatus)
 admin_Router.post('/latest-orders',isAdmin,orderController.latest)
 admin_Router.post('/report',isAdmin,orderController.report)
+admin_Router.get('/lineGraph',isAdmin,orderController.lineGraph)
+admin_Router.get('/doughnut',isAdmin,orderController.doughnut)
 
 //couponController
 admin_Router.get('/couponMgt',isAdmin,couponController.coupons)

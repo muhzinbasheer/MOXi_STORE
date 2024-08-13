@@ -75,12 +75,12 @@ const placeOrder = async (req, res) => {
 
         const checkoutData = req.session.checkoutData || {};
         const totalPrice = checkoutData.totalPrice || cart.totalPrice;
-        const discountAmount = checkoutData.discountAmount || 0; 
+        const discountAmount = checkoutData.discountAmount || 0;
         let razorpayOrderId = null;
 
         if (paymentMethod === 'Online') {
             const orderOptions = {
-                amount: (totalPrice * 100), 
+                amount: (totalPrice * 100),
                 currency: 'INR',
                 receipt: `receipt_${new Date().getTime()}`,
                 payment_capture: 1
@@ -115,11 +115,11 @@ const placeOrder = async (req, res) => {
             paymentMethod,
             items: cart.cartItems.map(item => {
                 let price;
-                
+
                 if (item.product_id.discountedAmount && item.product_id.discountedAmount > 0) {
-                    price = item.product_id.discountedAmount; 
+                    price = item.product_id.discountedAmount;
                 } else {
-                    price = item.product_id.price; 
+                    price = item.product_id.price;
                 }
 
                 return {
@@ -139,7 +139,7 @@ const placeOrder = async (req, res) => {
         for (let item of cart.cartItems) {
             let productId = item.product_id._id;
             const product = await Product.findById(productId);
-            product.stock -= item.quantity; 
+            product.stock -= item.quantity;
             await product.save();
         }
 
@@ -151,12 +151,12 @@ const placeOrder = async (req, res) => {
             const couponCode = checkoutData.coupon;
             const coupon = await Coupon.findOne({ code: couponCode });
             if (coupon) {
-                coupon.users.push(userId); 
+                coupon.users.push(userId);
                 await coupon.save();
             }
         }
 
-        req.session.checkoutData = {}; 
+        req.session.checkoutData = {};
 
         res.status(200).json({
             message: 'Order placed successfully',
@@ -261,15 +261,15 @@ const cancelProduct = async (req, res) => {
         if (order.paymentMethod === 'Wallet') {
             const wallet = await Wallet.findOne({ userId: order.userId });
             if (wallet) {
-                console.log("ordersssssss",order)
-                wallet.balance +=order.items[0].price - order.discount
+                console.log("ordersssssss", order)
+                wallet.balance += order.items[0].price - order.discount
                 await wallet.save();
 
                 const transaction = new Transaction({
                     userId: order.userId,
                     date: new Date(),
                     description: 'Refund for canceled product',
-                    amount:order.items[0].price - order.discount,
+                    amount: order.items[0].price - order.discount,
                     type: 'credit'
                 });
                 await transaction.save();
@@ -456,19 +456,18 @@ const updateItemStatus = async (req, res) => {
 
 
 
-const  latest =  async (req, res) => {
+const latest = async (req, res) => {
     try {
         const orders = await Order.find().sort({ createdAt: -1 }).limit(10).populate('userId').populate('items.productId');
         const totalSales = orders.reduce((acc, order) => acc + order.totalPrice, 0);
-        console.log('lllllllllllllllll',orders);
-        res.json({orders,totalSales});
+        res.json({ orders, totalSales });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'An error occurred while fetching the latest orders.' });
     }
-} 
+}
 
-const report = async (req,res) => {
+const report = async (req, res) => {
     try {
         const { startDate, endDate } = req.body;
         const orders = await Order.find({
@@ -483,8 +482,8 @@ const report = async (req,res) => {
         const totalItems = orders.reduce((acc, order) => acc + order.items.reduce((itemAcc, item) => itemAcc + item.quantity, 0), 0);
         const totalDiscount = orders.reduce((acc, order) => acc + (order.discount || 0), 0);
         const totalCoupons = orders.reduce((acc, order) => acc + (order.coupons || 0), 0);
-       
-        
+
+
         res.json({
             totalSales,
             totalOrders,
@@ -499,8 +498,72 @@ const report = async (req,res) => {
     }
 }
 
+const lineGraph = async (req, res) => {
+    try {
+        const filter = req.query.filter;
+        let startDate;
 
+        if (filter === 'weekly') {
+            startDate = new Date();
+            startDate.setDate(startDate.getDate() - 7);
+        } else if (filter === 'monthly') {
+            startDate = new Date();
+            startDate.setMonth(startDate.getMonth() - 1);
+        } else if (filter === 'yearly') {
+            startDate = new Date();
+            startDate.setFullYear(startDate.getFullYear() - 1);
+        }
 
+        const salesData = await Order.aggregate([
+            {
+                $match: {
+                    createdAt: { $gte: startDate }
+                }
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: filter === 'yearly' ? '%Y-%m' : '%Y-%m-%d', date: '$createdAt' } },
+                    totalSales: { $sum: '$totalPrice' }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            }
+        ]);
+
+        const labels = salesData.map(item => item._id);
+        const sales = salesData.map(item => item.totalSales);
+
+        res.json({ labels, sales });
+    } catch (error) {
+        console.log(error);
+
+    }
+}
+
+const doughnut = async (req,res)=>{
+    try {
+        const paymentMethodData = await Order.aggregate([
+            {
+                $group: {
+                    _id: '$paymentMethod',
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { count: -1 }
+            }
+        ]);
+    
+        const labels = paymentMethodData.map(item => item._id);
+        const counts = paymentMethodData.map(item => item.count);
+    
+        res.json({ labels, counts });   
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
 module.exports = {
     checkout,
     placeOrder,
@@ -513,5 +576,8 @@ module.exports = {
     adminViewOrder,
     updateItemStatus,
     report,
-    latest
+    latest,
+    lineGraph,
+    doughnut,
+    razorpay
 }

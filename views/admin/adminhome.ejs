@@ -76,15 +76,22 @@
                 <div class="card mb-4">
                     <article class="card-body">
                         <h5 class="card-title">Sale statistics</h5>
+                        <div class="d-flex justify-content-evenly">
+                            <a href="#" id="weekly-filter" onclick="updateChart('weekly')">Weekly</a>
+                            <a href="#" id="monthly-filter" onclick="updateChart('monthly')">Monthly</a>
+                            <a href="#" id="yearly-filter" onclick="updateChart('yearly')">Yearly</a>
+                        </div>
+                        <hr>
                         <canvas id="myChart" height="120px"></canvas>
+
                     </article>
                 </div>
             </div>
             <div class="col-xl-4 col-lg-12">
                 <div class="card mb-4">
                     <article class="card-body">
-                        <h5 class="card-title">Revenue Base on Area</h5>
-                        <canvas id="myChart2" height="217"></canvas>
+                        <h5 class="card-title">Orders based on Payments</h5>
+                        <canvas id="paymentMethodChart" height="200"></canvas>
                     </article>
                 </div>
             </div>
@@ -141,6 +148,55 @@
     </main>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            updateChart('weekly');
+
+            const ctx = document.getElementById('paymentMethodChart').getContext('2d');
+            let paymentChart;
+
+            fetch('/admin/doughnut')
+                .then(response => response.json())
+                .then(data => {
+                    const labels = data.labels;
+                    const counts = data.counts;
+
+                    paymentChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Payment Methods',
+                                data: counts,
+                                backgroundColor: [
+                                    'rgba(255, 99, 132)',  
+                                    'rgba(54, 162, 235)',  
+                                    'rgba(255, 206, 86)',   
+                                    'rgba(75, 192, 192)',  
+                                    'rgba(153, 102, 255)', 
+                                    'rgba(255, 159, 64)'   
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132)',   
+                                    'rgba(54, 162, 235)',   
+                                    'rgba(255, 206, 86)',   
+                                    'rgba(75, 192, 192)',   
+                                    'rgba(153, 102, 255)', 
+                                    'rgba(255, 159, 64)'    
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top'
+                                }
+                            }
+                        }
+                    });
+                });
+
+
             fetch('/admin/latest-orders', {
                 method: 'POST',
                 headers: {
@@ -272,6 +328,52 @@
             XLSX.writeFile(wb, "sales_report.xlsx");
         }
 
+
+        // line chart 
+
+        const ctx = document.getElementById('myChart').getContext('2d');
+        let salesChart;
+
+        const updateChart = (filter) => {
+            fetch(`/admin/lineGraph?filter=${filter}`)
+                .then(response => response.json())
+                .then(data => {
+                    const labels = data.labels;
+                    const salesData = data.sales;
+
+                    if (salesChart) {
+                        salesChart.destroy();
+                    }
+
+                    salesChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Sales',
+                                data: salesData,
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top'
+                                }
+                            }
+                        }
+                    });
+                });
+        };
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -285,4 +387,5 @@
     <script src="/admin-assets/js/main.js" type="text/javascript"></script>
     <script src="/admin-assets/js/custom-chart.js" type="text/javascript"></script>
     </body>
+
     </html>
