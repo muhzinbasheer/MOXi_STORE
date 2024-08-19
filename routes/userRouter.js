@@ -61,6 +61,7 @@ user_Router.put('/updateCart/:id', isUser, cartController.updateCartQuantity);
 user_Router.get('/checkout',isUser,orderController.checkout)
 user_Router.post('/placeOrder',isUser,orderController.placeOrder)
 user_Router.post('/saveOrder',isUser,orderController.saveOrder)
+user_Router.post('/retryPayment',isUser,orderController.retryPayment)
 user_Router.get('/orderConfirmation',isUser,orderController.orderConfirmation)
 user_Router.get('/orderDetails',isUser,orderController.orderDetails)
 user_Router.get('/orders/:orderId',isUser,orderController.viewOrder)

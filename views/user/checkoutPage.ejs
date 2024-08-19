@@ -236,7 +236,6 @@
                                                 </span>
                                             </div>
                                             <div class="size-208 text-center">
-                                                $
                                                 <span class="mtext-110 cl2" id="totalPrice">
                                                     <%= cart.totalPrice.toFixed(2) %>
                                                 </span>
@@ -326,6 +325,7 @@
                                         razorpayPaymentId: response.razorpay_payment_id,
                                         razorpayOrderId: response.razorpay_order_id,
                                         razorpaySignature: response.razorpay_signature,
+                                        addressId:selectedAddress
                                     })
                                 });
 
@@ -353,7 +353,39 @@
                         };
                         const rzp = new Razorpay(options);
                         rzp.open();
-                    } else {
+
+
+                        rzp.on('payment.failed', function (response) {
+                            
+                            const saveFailedOrder = async () => {
+                                const saveOrderResponse = await fetch('/saveOrder', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        razorpayPaymentId: response.error.metadata.payment_id,
+                                        razorpayOrderId: response.error.metadata.order_id,
+                                        addressId: selectedAddress
+                                    })
+                                });
+                                const saveOrderData = await saveOrderResponse.json();
+                                if (saveOrderResponse.ok) {
+                                    window.location.href = `/orderDetails`;
+                                } else {
+                                    Swal.fire({
+                                        text: saveOrderData.message,
+                                        icon: "error",
+                                        showConfirmButton: false
+                                    });
+                                }
+                            };
+                            saveFailedOrder()
+                            rzp.close()
+                            return;
+                        });
+                    }
+                    else {
                         window.location.href = `/orderConfirmation?orderId=${data.orderId}`;
                     }
                 } else {
