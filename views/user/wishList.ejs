@@ -128,13 +128,14 @@
 
                 const result = await response.json();
                 if (result.success) {
+                    location.reload();
                     Swal.fire({
                         title: "Removed from Wishlist",
                         text: "Item has been removed from your wishlist",
                         icon: "success",
                         showConfirmButton: false,
                         timer: 1500
-                    })
+                    });
                 } else {
                     Swal.fire({
                         text: "Failed to remove item from wishlist.",
