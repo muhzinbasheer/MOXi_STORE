@@ -8,6 +8,7 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const Wallet = require('../model/walletModel');
 const Transaction = require('../model/transactionModel');
+const { generateInvoicePDF } = require('../utils/pdfGenerator');
 
 
 const checkout = async (req, res) => {
@@ -297,6 +298,22 @@ const retryPayment = async (req, res) => {
     } catch (error) {
         console.error('Server error:', error);
         res.status(500).json({ message: 'Server error' });
+    }
+};
+
+const generateInvoice = async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+        const order = await Order.findById(orderId).populate('items.productId');
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        generateInvoicePDF(order, res);
+    } catch (error) {
+        console.error('Error generating invoice:', error);
+        res.status(500).json({ message: 'Error generating invoice' });
     }
 };
 
@@ -733,5 +750,6 @@ module.exports = {
     doughnut,
     saveOrder,
     retryPayment,
-    confirmPayment
+    confirmPayment,
+    generateInvoice
 };

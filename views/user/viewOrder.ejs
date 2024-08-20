@@ -223,7 +223,6 @@
         <div class="main-container">
             <div class="order-detail-section">
                 <h2>Order Details</h2>
-
                 <div class="order-info">
                     <p><span>Order ID:</span>
                         <%= order.orderId %>
@@ -310,6 +309,8 @@
                 <% if (order.paymentMethod!=='COD' && order.status=='Pending' ) { %>
                     <a class="btn-primary" style="color: white;" onclick="retryPayment('<%= order._id %>')">Pay
                         now</a>
+                        <% } else { %>
+                            <a class="btn-primary" href="/orders/<%= order._id %>/invoice">Download Invoice (PDF)</a>
                     <% } %>
             </div>
         </div>
