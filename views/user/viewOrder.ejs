@@ -234,6 +234,9 @@
                     <p><span>Payment Method:</span>
                         <%= order.paymentMethod %>
                     </p>
+                    <p><span>Payment Status:</span>
+                        <%= order.status %>
+                    </p>
                     <p><span>Delivery Address:</span></p>
                     <div class="address-info">
                         <p>
@@ -263,7 +266,6 @@
                                 <div>Actions</div>
                     </div>
                     <% order.items.forEach((product)=> { %>
-                        <% console.log(order); %>
                             <div class="product-row">
                                 <div class="product-cell">
                                     <img src="/<%= product.productId.productimg[0] %>" class="product-thumbnail"
@@ -274,16 +276,15 @@
                                     <%= product.quantity %>
                                 </div>
                                 <% if (order.discount> 0) { %>
-                                    <div>$<%= (order.discount / order.items.length).toFixed(2) %>
+                                    <div>$<%= (order.discount)/order.items.length+1 %>
                                     </div>
-                                    <div>$<%= (product.price * product.quantity).toFixed(2) - (order.discount /
-                                            order.items.length).toFixed(2) %>
+                                    <div>$<%= (product.price * product.quantity).toFixed(2) -
+                                            (order.discount)/order.items.length+1 %>
                                     </div>
                                     <% } else { %>
                                         <div>$<%= (product.price * product.quantity).toFixed(2) %>
                                         </div>
                                         <% } %>
-
                                             <div>$<%= order.totalPrice.toFixed(2) %>
                                             </div>
                                             <div id="status<%= product.productId._id  %>">
@@ -306,14 +307,16 @@
                             </div>
                             <% }) %>
                 </div>
-
-                <a class="btn" onclick="retryPayment('{{order._id}}')">Payment Pending</a>
+                <% if (order.paymentMethod!=='COD' && order.status=='Pending' ) { %>
+                    <a class="btn-primary" style="color: white;" onclick="retryPayment('<%= order._id %>')">Pay
+                        now</a>
+                    <% } %>
             </div>
         </div>
 
         <script src="/admin-assets/js/main.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
         <script>
 
             async function retryPayment(orderId) {
@@ -337,24 +340,25 @@
                             description: 'Test Transaction',
                             order_id: data.razorpayOrderId,
                             handler: async function (response) {
-                                const saveOrderResponse = await fetch('/saveOrder', {
+                                const confirmPaymentResponse = await fetch('/confirmPayment', {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json'
                                     },
                                     body: JSON.stringify({
+                                        orderId: orderId,
                                         razorpayPaymentId: response.razorpay_payment_id,
                                         razorpayOrderId: response.razorpay_order_id,
                                         razorpaySignature: response.razorpay_signature,
                                     })
                                 });
 
-                                const saveOrderData = await saveOrderResponse.json();
-                                if (saveOrderResponse.ok) {
-                                    window.location.href = `/orderConfirmation?orderId=${saveOrderData.orderId}`;
+                                const confirmPaymentData = await confirmPaymentResponse.json();
+                                if (confirmPaymentResponse.ok) {
+                                    window.location.reload()
                                 } else {
                                     Swal.fire({
-                                        text: saveOrderData.message,
+                                        text: confirmPaymentData.message,
                                         icon: "error"
                                     });
                                 }
@@ -387,6 +391,7 @@
                     });
                 }
             }
+
 
 
             document.querySelectorAll('.confirm-action').forEach(form => {
