@@ -269,7 +269,7 @@ async function addToCart(productId){
     } catch (error) {
         console.error('There was an error!', error);
         Swal.fire({
-            text: "There was an error adding the item to the cart.",
+            text: "Please login to add to cart",
             icon: "error"
         });
     }
