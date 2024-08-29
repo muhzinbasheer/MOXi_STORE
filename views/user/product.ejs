@@ -115,6 +115,15 @@
 										$<%= product.price %>
 									</span>
 								</div>
+
+								<p class="stext-102 cl3 p-t-10 ">
+                                    <% if (product.stock> 0) { %>
+                                     <p class="text-success">Instock</p>
+                                     <% } else { %>
+                                      <p class="text-secondary">Sold Out</p>
+                                    <% } %>
+                                </p>
+
 								<div class="block2-txt-child2 flex-r p-t-3">
 									<a href="javascript:void(0)"
 										class="btn-addwish-b2 dis-block pos-relative js-addwish-b2"
